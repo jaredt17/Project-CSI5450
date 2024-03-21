@@ -1,0 +1,5 @@
+ export FLASK_APP=app 
+ export FLASK_ENV=development
+
+ cd realMI
+ flask run
