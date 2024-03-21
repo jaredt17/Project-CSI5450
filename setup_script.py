@@ -2,14 +2,19 @@ from enum import Enum
 from typing import List
 
 from pymongo import MongoClient
+from bson import ObjectId
 
 DB = "realmi"
 
 class TABLES(str, Enum):
+
     homes = "homes"
     locations = "locations"
+    appliances = "appliances"
     agents = "agents"
     owners = "owners"
+    transactions = "transactions"
+    companies = "companies"
 
 
 class HomeType(str, Enum):
@@ -43,7 +48,7 @@ class HOME(str, Enum):
     owner_id = "OwnerId"
     location_id = "LocationId"
 
-    def new(floor_space: int, floors: int, bed_rooms: float, bath_rooms: float, land_size: float, year_constructed: int, appliances: List[str], owner: str = None):
+    def new(floor_space: int, floors: int, bed_rooms: float, bath_rooms: float, land_size: float, year_constructed: int, appliances: List[ObjectId], owner: ObjectId = None):
         return {
             HOME.floor_space: floor_space,
             HOME.floors: floors,
@@ -52,7 +57,8 @@ class HOME(str, Enum):
             HOME.land_size: land_size,
             HOME.year_constructed: year_constructed,
             HOME.home_type: HomeType.decide(floor_space, floors, bed_rooms, bath_rooms, land_size),
-            HOME.appliances: appliances
+            HOME.appliances: appliances,
+            HOME.owner_id: owner
         }
 
 
@@ -116,13 +122,25 @@ class COMPANY(str, Enum):
     state = "State"
 
 
+def setup():
+
+    cl = MongoClient()
+
+    realmi = cl[DB]
+    
+    for k in  TABLES.__dict__.keys():
+        realmi.create_collection(k)
 
 def main():
     client = MongoClient()
 
-    client.list_databases()
+    lst = client.list_databases()
+
+    if DB in lst:
+        client.drop_database(DB)
 
     realmi = client[DB]
+    realmi.create_collection()
     homes = realmi["homes"]
 
     # homes.insert_many()
@@ -135,7 +153,7 @@ def main():
         "YearConstructed": 1985,
         "Type": "Townhome",
     }
-    
+
     homes.insert_one(home)
 
     # locations = realmi.create_collection("locations")    
