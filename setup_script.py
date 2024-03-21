@@ -40,8 +40,10 @@ class HOME(str, Enum):
     year_constructed = "YearConstructed"
     home_type = "HomeType"
     appliances = "Appliances"
+    owner_id = "OwnerId"
+    location_id = "LocationId"
 
-    def new(floor_space: int, floors: int, bed_rooms: float, bath_rooms: float, land_size: float, year_constructed: int, appliances: List[str]):
+    def new(floor_space: int, floors: int, bed_rooms: float, bath_rooms: float, land_size: float, year_constructed: int, appliances: List[str], owner: str = None):
         return {
             HOME.floor_space: floor_space,
             HOME.floors: floors,
@@ -51,7 +53,7 @@ class HOME(str, Enum):
             HOME.year_constructed: year_constructed,
             HOME.home_type: HomeType.decide(floor_space, floors, bed_rooms, bath_rooms, land_size),
             HOME.appliances: appliances
-        }    
+        }
 
 
 class LOCATION(str, Enum):
@@ -78,7 +80,7 @@ class AGENT(str, Enum):
 
     first_name = "FirstName"
     last_name = "LastName"
-    company = "Company"
+    companies = "Companies"
     sales = "Sales"
     
 
@@ -97,6 +99,22 @@ class TRANSACTION(str, Enum):
 
     owner_id = "OwnerId"
     agent_id = "AgentId"
+    company_id = "CompanyId"
+    location_id = "LocationId"
+    home_id = "HomeId"
+
+
+class COMPANY(str, Enum):
+
+    name = "Name"
+    commission = "Commission"
+    street_number = "StreetNumber"
+    unit_number = "UnitNumber"
+    street = "Street"
+    city = "City"
+    zip = "Zip"
+    state = "State"
+
 
 
 def main():
@@ -104,7 +122,7 @@ def main():
 
     client.list_databases()
 
-    realmi = client["realmi"]
+    realmi = client[DB]
     homes = realmi["homes"]
 
     # homes.insert_many()
@@ -117,6 +135,7 @@ def main():
         "YearConstructed": 1985,
         "Type": "Townhome",
     }
+    
     homes.insert_one(home)
 
     # locations = realmi.create_collection("locations")    
