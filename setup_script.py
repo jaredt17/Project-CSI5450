@@ -71,6 +71,7 @@ class LOCATION(str, Enum):
     zip = "Zip"
     state = "State"
     county = "County"
+    country = "Country"
 
 
 class APPLIANCE(str, Enum):
@@ -128,6 +129,8 @@ def setup():
 
     cl = MongoClient()
 
+    cl.drop_database(DB)
+
     realmi = cl[DB]
     
     for k in TABLES.__dict__.keys():
@@ -136,34 +139,7 @@ def setup():
     
 
 def main():
-    client = MongoClient()
-
-    lst = client.list_databases()
-
-    if DB in lst:
-        client.drop_database(DB)
-
-    realmi = client[DB]
-    realmi.create_collection()
-    homes = realmi["homes"]
-
-    # homes.insert_many()
-
-    home = {
-        "FloorSpace": 1000,
-        "Floors": 2,
-        "BedRooms": 2,
-        "LandSize": 0.5,
-        "YearConstructed": 1985,
-        "Type": "Townhome",
-    }
-
-    homes.insert_one(home)
-
-    # locations = realmi.create_collection("locations")    
-    # appliances = realmi.create_collection("appliances")
-    # agents = realmi.create_collection("agents")
-    # owners = realmi.create_collection("owners")
+    setup()
 
 
 if __name__ == "__main__":
