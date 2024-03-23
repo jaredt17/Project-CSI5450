@@ -108,6 +108,8 @@ class TRANSACTION(str, Enum):
     company_id = "CompanyId"
     location_id = "LocationId"
     home_id = "HomeId"
+    date = "Date"
+    price = "Price"
 
 
 class COMPANY(str, Enum):
@@ -128,8 +130,10 @@ def setup():
 
     realmi = cl[DB]
     
-    for k in  TABLES.__dict__.keys():
+    for k in TABLES.__dict__.keys():
         realmi.create_collection(k)
+
+    
 
 def main():
     client = MongoClient()
