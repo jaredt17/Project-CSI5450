@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Homes</title>
+</head>
+<body>
+    <h1>List of Homes</h1>
+    <ul>
+        {% for home in homes %}
+            <li>
+                Type: {{ home['home_type'] | default('N/A') }}, 
+                Floor Space: {{ home['floor_space'] | default('N/A') }},
+                Bedrooms: {{ home['bed_rooms'] | default('N/A') }},
+                Bathrooms: {{ home['bath_rooms'] | default('N/A') }},
+                Land Size: {{ home['land_size'] | default('N/A') }} acres
+            </li>
+        {% else %}
+            <li>No homes found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

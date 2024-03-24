@@ -2,41 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RealMI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate App</title>
     <style>
-        .todo {
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            margin: 10px;
-            background-color: #eee;
+        }
+        header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav ul {
+            padding: 0;
+            list-style: none;
+            text-align: center;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h1>Real MI - Real Estate Application</h1>
-    <hr>
-    <div class="content">
-    <form method="post">
-        <p>
-            <b><label for="content">Todo content</label></b>
-        </p>
-        <p>
-            <input type="text" name="content"
-                placeholder="Todo Content"></input>
-        </p>
-
-        <p>
-            <b><label for="degree">Degree</label></b>
-        </p>
-        <p>
-            <input id="degree-0" name="degree" required type="radio" value="Important">
-            <label for="degree-0">Important</label>
-        </p>
-        <p>
-            <input id="degree-1" name="degree" required type="radio" value="Unimportant">
-            <label for="degree-1">Unimportant</label>
-        </p>
-        <button type="submit">Submit</button>
-    </form>
+    <header>
+        <div class="container">
+            <h1>Real Estate Application</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/homes">View Homes</a></li>
+                    <li><a href="/add_home">Add Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h2>Welcome to the Real Estate Application</h2>
+        <p>Use the navigation links above to view homes or add a new home.</p>
     </div>
 </body>
 </html>
