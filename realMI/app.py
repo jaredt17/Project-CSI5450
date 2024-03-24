@@ -1,17 +1,36 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
-from db import *
+import db
+# from data_loader import *
+import data_loader as dl
 
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 client = MongoClient()
-
-db = client['realmi']
+client.drop_database(db.DB)
+database = client['realmi']
 
 # Define collections
-homes_collection = db['HOMES']
+homes_collection = database['HOMES']
+locations_collection = database["LOCATIONS"]
+appliances_collection = database["APPLIANCES"]
+agents_collection = database["AGENTS"]
+owners_collection = database["OWNERS"]
+transactions_collection = database["TRANSACTIONS"]
+companies_collection = database["COMPANIES"]
+
+# Loading Data
+loaded_data = dl.load_mock()
+homes_collection.insert_many(loaded_data[db.TABLES.HOMES.value])
+locations_collection.insert_many(loaded_data[db.TABLES.LOCATIONS.value])
+appliances_collection.insert_many(loaded_data[db.TABLES.APPLIANCES.value])
+agents_collection.insert_many(loaded_data[db.TABLES.AGENTS.value])
+owners_collection.insert_many(loaded_data[db.TABLES.OWNERS.value])
+transactions_collection.insert_many(loaded_data[db.TABLES.TRANSACTIONS.value])
+companies_collection.insert_many(loaded_data[db.TABLES.COMPANIES.value])
+
 
 # Starting app
 @app.route('/', methods=('GET', 'POST'))
@@ -43,7 +62,7 @@ def add_home():
             home_type_user_input = request.form.get('home_type')
             
             # call our hometype function to decide what style of home this is, the user should not be allowed to set incorrectly
-            home_type_valid = HomeType.validate(home_type_user_input, floor_space, floors, bed_rooms, land_size)
+            home_type_valid = db.HomeType.validate(home_type_user_input, floor_space, floors, bed_rooms, land_size)
 
             print(home_type_valid) # debug
 
@@ -54,13 +73,13 @@ def add_home():
                 print("Home Passed validation") 
             
             home_data = {
-                HOME.floor_space.value: floor_space,
-                HOME.floors.value: floors,
-                HOME.bed_rooms.value: bed_rooms,
-                HOME.bath_rooms.value: bath_rooms,
-                HOME.land_size.value: land_size,
-                HOME.year_constructed.value: year_constructed,
-                HOME.home_type.value: home_type_user_input,
+                db.HOME.floor_space.value: floor_space,
+                db.HOME.floors.value: floors,
+                db.HOME.bed_rooms.value: bed_rooms,
+                db.HOME.bath_rooms.value: bath_rooms,
+                db.HOME.land_size.value: land_size,
+                db.HOME.year_constructed.value: year_constructed,
+                db.HOME.home_type.value: home_type_user_input,
             }
             
             if insert == True:

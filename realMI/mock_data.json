@@ -1,0 +1,80 @@
+{
+    "HOMES": [
+      {
+        "floor_space": 2000,
+        "floors": 2,
+        "bed_rooms": 4,
+        "bath_rooms": 3,
+        "land_size": 0.5,
+        "year_constructed": 1998,
+        "home_type": "house",
+        "appliances": [
+          {"name": "Refrigerator", "model": "ABC123", "year": 2020, "make": "Samsung", "price": 1000},
+          {"name": "Washing Machine", "model": "XYZ456", "year": 2019, "make": "LG", "price": 800}
+        ],
+        "owner_id": "60a1c5f7b0e07c1650c9c086",
+        "location_id": "60a1c5f7b0e07c1650c9c087"
+      },
+      {
+        "floor_space": 800,
+        "floors": 1,
+        "bed_rooms": 2,
+        "bath_rooms": 1,
+        "land_size": 0,
+        "year_constructed": 2005,
+        "home_type": "apartment",
+        "appliances": [
+          {"name": "Microwave", "model": "MNO789", "year": 2021, "make": "Whirlpool", "price": 200},
+          {"name": "Dishwasher", "model": "PQR123", "year": 2020, "make": "Bosch", "price": 500}
+        ],
+        "owner_id": "60a1c5f7b0e07c1650c9c088",
+        "location_id": "60a1c5f7b0e07c1650c9c089"
+      }
+    ],
+    "LOCATIONS": [
+      {
+        "street_number": 123,
+        "unit_number": "A",
+        "street": "Main Street",
+        "city": "Anytown",
+        "zip": "12345",
+        "state": "CA",
+        "county": "Any County",
+        "country": "USA"
+      },
+      {
+        "street_number": 456,
+        "unit_number": "B",
+        "street": "Elm Street",
+        "city": "Othertown",
+        "zip": "54321",
+        "state": "NY",
+        "county": "Other County",
+        "country": "USA"
+      }
+    ],
+    "APPLIANCES": [
+      {"name": "Refrigerator", "model": "ABC123", "year": 2020, "make": "Samsung", "price": 1000},
+      {"name": "Washing Machine", "model": "XYZ456", "year": 2019, "make": "LG", "price": 800},
+      {"name": "Microwave", "model": "MNO789", "year": 2021, "make": "Whirlpool", "price": 200},
+      {"name": "Dishwasher", "model": "PQR123", "year": 2020, "make": "Bosch", "price": 500}
+    ],
+    "AGENTS": [
+      {"first_name": "John", "last_name": "Doe", "companies": ["ABC Realty", "XYZ Real Estate"], "sales": 10},
+      {"first_name": "Jane", "last_name": "Smith", "companies": ["DEF Realty"], "sales": 15}
+    ],
+    "OWNERS": [
+      {"first_name": "Alice", "last_name": "Johnson", "ssn": "123-45-6789", "no_dependents": 2, "income": 75000, "age": 40, "profession": "Engineer"},
+      {"first_name": "Bob", "last_name": "Williams", "ssn": "987-65-4321", "no_dependents": 1, "income": 60000, "age": 35, "profession": "Teacher"}
+    ],
+    "TRANSACTIONS": [
+      {"owner_id": "60a1c5f7b0e07c1650c9c086", "agent_id": "60a1c5f7b0e07c1650c9c087", "company_id": "60a1c5f7b0e07c1650c9c088", "location_id": "60a1c5f7b0e07c1650c9c089", "home_id": "60a1c5f7b0e07c1650c9c090", "date": "2023-01-15", "price": 250000},
+      {"owner_id": "60a1c5f7b0e07c1650c9c091", "agent_id": "60a1c5f7b0e07c1650c9c092", "company_id": "60a1c5f7b0e07c1650c9c093", "location_id": "60a1c5f7b0e07c1650c9c094", "home_id": "60a1c5f7b0e07c1650c9c095", "date": "2023-02-20", "price": 300000}
+    ],
+    "COMPANIES": [
+        {"name": "ABC Realty", "commission": 5, "street_number": 100, "unit_number": "", "street": "Main Street", "city": "Anytown", "zip": "12345", "state": "CA"},
+        {"name": "XYZ Real Estate", "commission": 6, "street_number": 200, "unit_number": "", "street": "Elm Street", "city": "Othertown", "zip": "54321", "state": "NY"},
+        {"name": "DEF Realty", "commission": 4, "street_number": 300, "unit_number": "", "street": "Oak Street", "city": "Anothertown", "zip": "67890", "state": "TX"}
+    ]
+}
+  

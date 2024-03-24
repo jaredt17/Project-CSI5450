@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List
 
 from pymongo import MongoClient
+import json
 from bson import ObjectId
 
 DB = "realmi"
@@ -122,7 +123,6 @@ class COMPANY(str, Enum):
     zip = "zip"
     state = "state"
 
-
 def setup():
 
     cl = MongoClient()
@@ -133,9 +133,6 @@ def setup():
     
     for k in TABLES.__members__.keys():
         realmi.create_collection(k)
-
-    
-
 
 def main():
     setup()
