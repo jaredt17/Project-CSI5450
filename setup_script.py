@@ -8,21 +8,21 @@ DB = "realmi"
 
 class TABLES(str, Enum):
 
-    homes = "homes"
-    locations = "locations"
-    appliances = "appliances"
-    agents = "agents"
-    owners = "owners"
-    transactions = "transactions"
-    companies = "companies"
+    HOMES = "HOMES"
+    LOCATIONS = "LOCATIONS"
+    APPLIANCES = "APPLIANCES"
+    AGENTS = "AGENTS"
+    OWNERS = "OWNERS"
+    TRANSACTIONS = "TRANSACTIONS"
+    COMPANIES = "COMPANIES"
 
 
 class HomeType(str, Enum):
 
-    mansion = "Mansion"
-    apartment = "Apartment"
-    townhome = "Townhome"
-    condo = "Condo"
+    mansion = "mansion"
+    apartment = "apartment"
+    townhome = "townhome"
+    condo = "condo"
 
     def decide(floor_space: int, floors: int, bed_rooms: int, bath_rooms: float, land_size: int) -> str:
         if floor_space >= 6000 and land_size > 2:
@@ -37,92 +37,79 @@ class HomeType(str, Enum):
 
 class HOME(str, Enum):
 
-    floor_space = "FloorSpace"
-    floors = "Floors"
-    bed_rooms = "BedRooms"
-    bath_rooms = "BathRooms"
-    land_size = "LandSize"
-    year_constructed = "YearConstructed"
-    home_type = "HomeType"
-    appliances = "Appliances"
-    owner_id = "OwnerId"
-    location_id = "LocationId"
-
-    def new(floor_space: int, floors: int, bed_rooms: float, bath_rooms: float, land_size: float, year_constructed: int, appliances: List[ObjectId], owner: ObjectId = None):
-        return {
-            HOME.floor_space: floor_space,
-            HOME.floors: floors,
-            HOME.bed_rooms: bed_rooms,
-            HOME.bath_rooms: bath_rooms,
-            HOME.land_size: land_size,
-            HOME.year_constructed: year_constructed,
-            HOME.home_type: HomeType.decide(floor_space, floors, bed_rooms, bath_rooms, land_size),
-            HOME.appliances: appliances,
-            HOME.owner_id: owner
-        }
+    floor_space = "floor_space"
+    floors = "floors"
+    bed_rooms = "bed_rooms"
+    bath_rooms = "bath_rooms"
+    land_size = "land_size"
+    year_constructed = "year_constructed"
+    home_type = "home_type"
+    appliances = "appliances"
+    owner_id = "owner_id"
+    location_id = "location_id"
 
 
 class LOCATION(str, Enum):
 
-    street_number = "StreetNumber"
-    unit_number = "UnitNumber"
-    street = "Street"
-    city = "City"
-    zip = "Zip"
-    state = "State"
-    county = "County"
-    country = "Country"
+    street_number = "street_number"
+    unit_number = "unit_number"
+    street = "street"
+    city = "city"
+    zip = "zip"
+    state = "state"
+    county = "county"
+    country = "country"
 
 
 class APPLIANCE(str, Enum):
 
-    name = "Name"
-    model = "Model"
-    year = "Year"
-    make = "Make"
-    price = "Price"
+    name = "name"
+    model = "model"
+    year = "year"
+    make = "make"
+    price = "price"
 
 
 class AGENT(str, Enum):
 
-    first_name = "FirstName"
-    last_name = "LastName"
-    companies = "Companies"
-    sales = "Sales"
+    first_name = "first_name"
+    last_name = "last_name"
+    companies = "companies"
+    sales = "sales"
     
 
 class OWNER(str, Enum):
 
-    first_name = "FirstName"
-    last_name = "LastName"
-    ssn = "SSN"
-    no_dependents = "NoDependents"
-    income = "Income"
-    age = "Age"
-    profession = "Profession"
+    first_name = "first_name"
+    last_name = "last_name"
+    ssn = "ssn"
+    no_dependents = "no_dependents"
+    income = "income"
+    age = "age"
+    profession = "profession"
 
 
 class TRANSACTION(str, Enum):
 
-    owner_id = "OwnerId"
-    agent_id = "AgentId"
-    company_id = "CompanyId"
-    location_id = "LocationId"
-    home_id = "HomeId"
-    date = "Date"
-    price = "Price"
+    owner_id = "owner_id"
+    agent_id = "agent_id"
+    company_id = "company_id"
+    location_id = "location_id"
+    home_id = "home_id"
+    date = "date"
+    price = "price"
 
 
 class COMPANY(str, Enum):
 
-    name = "Name"
-    commission = "Commission"
-    street_number = "StreetNumber"
-    unit_number = "UnitNumber"
-    street = "Street"
-    city = "City"
-    zip = "Zip"
-    state = "State"
+    name = "name"
+    commission = "commission"
+    street_number = "street_number"
+    unit_number = "unit_number"
+    street = "street"
+    city = "city"
+    zip = "zip"
+    state = "state"
 
 
 def setup():
@@ -133,10 +120,11 @@ def setup():
 
     realmi = cl[DB]
     
-    for k in TABLES.__dict__.keys():
+    for k in TABLES.__members__.keys():
         realmi.create_collection(k)
 
     
+
 
 def main():
     setup()
