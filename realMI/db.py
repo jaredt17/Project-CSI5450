@@ -7,7 +7,7 @@ from bson import ObjectId
 
 DB = "realmi"
 
-class TABLES(str, Enum):
+class TABLES:
 
     HOMES = "HOMES"
     LOCATIONS = "LOCATIONS"
@@ -18,7 +18,7 @@ class TABLES(str, Enum):
     COMPANIES = "COMPANIES"
 
 
-class HomeType(str, Enum):
+class HomeType:
 
     house= "house"
     mansion = "mansion"
@@ -47,7 +47,7 @@ class HomeType(str, Enum):
         # Should return True by default?
         return True
 
-class HOME(str, Enum):
+class HOME:
 
     floor_space = "floor_space"
     floors = "floors"
@@ -57,11 +57,11 @@ class HOME(str, Enum):
     year_constructed = "year_constructed"
     home_type = "home_type"
     appliances = "appliances"
-    owner_id = "owner_id"
-    location_id = "location_id"
+    owner = "owner"
+    location = "location"
 
 
-class LOCATION(str, Enum):
+class LOCATION:
 
     street_number = "street_number"
     unit_number = "unit_number"
@@ -73,7 +73,7 @@ class LOCATION(str, Enum):
     country = "country"
 
 
-class APPLIANCE(str, Enum):
+class APPLIANCE:
 
     name = "name"
     model = "model"
@@ -82,15 +82,14 @@ class APPLIANCE(str, Enum):
     price = "price"
 
 
-class AGENT(str, Enum):
+class AGENT:
 
     first_name = "first_name"
     last_name = "last_name"
     companies = "companies"
-    sales = "sales"
     
 
-class OWNER(str, Enum):
+class OWNER:
 
     first_name = "first_name"
     last_name = "last_name"
@@ -101,18 +100,17 @@ class OWNER(str, Enum):
     profession = "profession"
 
 
-class TRANSACTION(str, Enum):
+class TRANSACTION:
 
-    owner_id = "owner_id"
-    agent_id = "agent_id"
-    company_id = "company_id"
-    location_id = "location_id"
-    home_id = "home_id"
+    owner = "owner"
+    agent = "agent"
+    company = "company"
+    home = "home"
     date = "date"
     price = "price"
 
 
-class COMPANY(str, Enum):
+class COMPANY:
 
     name = "name"
     commission = "commission"
