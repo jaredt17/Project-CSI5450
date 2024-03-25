@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
 import db
-# from data_loader import *
-import data_loader as dl
+
+
+from init_db import init_db
 
 
 app = Flask(__name__)
@@ -21,16 +22,7 @@ owners_collection = database["OWNERS"]
 transactions_collection = database["TRANSACTIONS"]
 companies_collection = database["COMPANIES"]
 
-# Loading Data
-loaded_data = dl.load_mock()
-homes_collection.insert_many(loaded_data[db.TABLES.HOMES.value])
-locations_collection.insert_many(loaded_data[db.TABLES.LOCATIONS.value])
-appliances_collection.insert_many(loaded_data[db.TABLES.APPLIANCES.value])
-agents_collection.insert_many(loaded_data[db.TABLES.AGENTS.value])
-owners_collection.insert_many(loaded_data[db.TABLES.OWNERS.value])
-transactions_collection.insert_many(loaded_data[db.TABLES.TRANSACTIONS.value])
-companies_collection.insert_many(loaded_data[db.TABLES.COMPANIES.value])
-
+init_db()
 
 # Starting app
 @app.route('/', methods=('GET', 'POST'))
@@ -73,13 +65,13 @@ def add_home():
                 print("Home Passed validation") 
             
             home_data = {
-                db.HOME.floor_space.value: floor_space,
-                db.HOME.floors.value: floors,
-                db.HOME.bed_rooms.value: bed_rooms,
-                db.HOME.bath_rooms.value: bath_rooms,
-                db.HOME.land_size.value: land_size,
-                db.HOME.year_constructed.value: year_constructed,
-                db.HOME.home_type.value: home_type_user_input,
+                db.HOME.floor_space: floor_space,
+                db.HOME.floors: floors,
+                db.HOME.bed_rooms: bed_rooms,
+                db.HOME.bath_rooms: bath_rooms,
+                db.HOME.land_size: land_size,
+                db.HOME.year_constructed: year_constructed,
+                db.HOME.home_type: home_type_user_input,
             }
             
             if insert == True:
