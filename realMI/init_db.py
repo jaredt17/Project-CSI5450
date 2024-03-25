@@ -1,13 +1,19 @@
 import json
+from datetime import datetime
 
 import db
 
 from pymongo import MongoClient
 
+def decode_date(dct):
+    if 'date' in dct:
+        dct['date'] = datetime.strptime(dct['date'], '%Y-%m-%d')
+    return dct
+
 def init_db(path: str = 'mock_data.json'):
 
     with open(path) as f:
-        data = json.load(f)
+        data = json.load(f, object_hook=decode_date)
     
     client = MongoClient()
     client.drop_database(db.DB)
