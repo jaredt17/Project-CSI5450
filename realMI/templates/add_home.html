@@ -44,6 +44,13 @@
             <option value="townhome">Townhome</option>
             <option value="condo">Condo</option>
         </select><br>
+        <label for="owner">Owner:</label>
+        <select name="owner" id="owner" required>
+            <option value="">Select Owner</option>
+            {% for owner in owners %}
+            <option value="{{ owner['_id'] }}">{{ owner['first_name'] }} {{ owner['last_name'] }}</option>
+            {% endfor %}
+        </select><br>
         <!-- You can extend this form to include appliances, owners, and locations -->
         <input type="submit" value="Add Home">
     </form>

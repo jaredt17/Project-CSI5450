@@ -33,14 +33,35 @@ def index():
 # Homes page
 @app.route('/homes')
 def list_homes():
-    homes = list(homes_collection.find())  # Fetch all homes
-    return render_template('list_homes.html', homes=homes)
+    # Fetch all cities for the dropdown
+    cities = locations_collection.distinct("city")
+
+    # Fetch all owners for the dropdown
+    owners = list(owners_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1}))
+
+    # Retrieve query parameters
+    selected_city = request.args.get('city')
+    owner_id = request.args.get('owner_id')
+
+    # Construct the query
+    query = {}
+    if selected_city:
+        query["location.city"] = selected_city
+    if owner_id:
+        query["owner._id"] = ObjectId(owner_id)
+
+    # Retrieve the filtered list of homes based on the query
+    homes = list(homes_collection.find(query))
+
+    return render_template('list_homes.html', homes=homes, cities=cities, owners=owners)
 
 # Adding a home form - make sure this is the approach we should be using
 @app.route('/add_home', methods=['GET', 'POST'])
 def add_home():
     # Query the database for appliances before rendering the form
     appliances = list(appliances_collection.find())
+    owners = list(owners_collection.find())
+
     insert = True # start as true until some check fails
     if request.method == 'POST':
         try:
@@ -73,6 +94,10 @@ def add_home():
             # Fetch the full documents for the selected appliances
             selected_appliances = list(appliances_collection.find({"_id": {"$in": [ObjectId(id) for id in selected_appliance_ids]}}))
             
+            owner_id = request.form.get('owner')
+            # Find the complete owner document including its _id
+            owner_document = owners_collection.find_one({"_id": ObjectId(owner_id)})
+
             home_data = {
                 db.HOME.floor_space: floor_space,
                 db.HOME.floors: floors,
@@ -81,7 +106,8 @@ def add_home():
                 db.HOME.land_size: land_size,
                 db.HOME.year_constructed: year_constructed,
                 db.HOME.home_type: home_type_user_input,
-                db.HOME.appliances: selected_appliances
+                db.HOME.appliances: selected_appliances,
+                db.HOME.owner: owner_document
             }
             
             if insert == True:
@@ -92,4 +118,26 @@ def add_home():
         except Exception as e:
             flash(f'An error occurred: {e}', 'error')  # Flash an error message
         return redirect(url_for('add_home'))
-    return render_template('add_home.html', appliances = appliances)
+    return render_template('add_home.html', appliances = appliances, owners = owners)
+
+@app.route('/add_owner', methods=['GET'])
+def add_owner_form():
+    return render_template('add_owner.html')
+
+@app.route('/add_owner', methods=['POST'])
+def add_owner():
+    try:
+        owner_data = {
+            "first_name": request.form['first_name'],
+            "last_name": request.form['last_name'],
+            "ssn": request.form['ssn'],
+            "no_dependents": int(request.form['no_dependents']),
+            "income": float(request.form['income']),
+            "age": int(request.form['age']),
+            "profession": request.form['profession'],
+        }
+        owners_collection.insert_one(owner_data)
+        flash('Owner added successfully!', 'success')
+    except Exception as e:
+        flash(f'An error occurred: {e}', 'error')
+    return redirect(url_for('add_owner_form'))

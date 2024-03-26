@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Owner</title>
+</head>
+<body>
+    <h1>Add a New Owner</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('add_owner') }}" method="post">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" required><br>
+
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" required><br>
+
+        <label for="ssn">Social Security Number:</label>
+        <input type="text" id="ssn" name="ssn" required><br>
+
+        <label for="no_dependents">Number of Dependents:</label>
+        <input type="number" id="no_dependents" name="no_dependents" required><br>
+
+        <label for="income">Income:</label>
+        <input type="number" id="income" name="income" required><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br>
+
+        <label for="profession">Profession:</label>
+        <input type="text" id="profession" name="profession" required><br>
+
+        <input type="submit" value="Add Owner">
+    </form>
+</body>
+</html>
