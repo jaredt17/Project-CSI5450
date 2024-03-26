@@ -23,11 +23,11 @@
         <input type="text" id="first_name" name="first_name"><br>
         <label for="last_name">Last Name:</label>
         <input type="text" id="last_name" name="last_name"><br>
-        <label for="companies">Companies:</label>
-        <select id="companies" name="companies">
-            {% for company in companies %}
-                <option value="{% company['_id'] %}">{% company['name'] %}</option>
-        </select><br>
+        <label for="companies">Companies:</label><br>
+        {% for company in companies %}
+            <input type="checkbox" id="company_{{company['_id']}}" name="companies" value="{{company['_id']}}">
+            <label for="company_{{company['_id']}}">{{ company['name'] }}</label><br>
+        {% endfor %}
         <!-- You can extend this form to include appliances, owners, and locations -->
         <input type="submit" value="Add Agent">
     </form>

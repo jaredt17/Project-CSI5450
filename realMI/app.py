@@ -93,7 +93,7 @@ def add_home():
         except Exception as e:
             flash(f'An error occurred: {e}', 'error')  # Flash an error message
         return redirect(url_for('add_home'))
-    return render_template('add_home.html')
+    return render_template('add_home.html', appliances=appliances)
 
 
 @app.route('/add_agent', methods=['GET', 'POST'])
@@ -122,5 +122,5 @@ def add_agent():
         except Exception as e:
             flash(f'An error occurred: {e}', 'error')  # Flash an error message
         return redirect(url_for('add_agent'))
-    return render_template('add_agent_html', companies=companies)
+    return render_template('add_agent.html', companies=companies)
     
