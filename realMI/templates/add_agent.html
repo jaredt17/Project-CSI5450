@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Agent</title>
+</head>
+<body>
+    <h1>Add a New Agent</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+ 
+
+    <form action="/add_agent" method="post">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name"><br>
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name"><br>
+        <label for="companies">Companies:</label>
+        <select id="companies" name="companies">
+            {% for company in companies %}
+                <option value="{% company['_id'] %}">{% company['name'] %}</option>
+        </select><br>
+        <!-- You can extend this form to include appliances, owners, and locations -->
+        <input type="submit" value="Add Agent">
+    </form>
+</body>
+</html>
