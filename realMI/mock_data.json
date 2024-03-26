@@ -45,6 +45,36 @@
       "state": "NY",
       "county": "Other County",
       "country": "USA"
+    },
+    {
+      "street_number": 100,
+      "unit_number": "",
+      "street": "Main Street",
+      "city": "Anytown",
+      "zip": "12345",
+      "state": "CA",
+      "county" : null,
+      "country": "USA"
+    },
+    {
+      "street_number": 200,
+      "unit_number": "",
+      "street": "Elm Street",
+      "city": "Othertown",
+      "zip": "54321",
+      "state": "NY",
+      "county" : null,
+      "country": "USA"
+    },
+    {
+      "street_number": 300,
+      "unit_number": "",
+      "street": "Oak Street",
+      "city": "Anothertown",
+      "zip": "67890",
+      "state": "TX",
+      "county" : null,
+      "country": "USA"
     }
   ],
   "APPLIANCES": [
@@ -131,32 +161,17 @@
     {
       "name": "BrigthBridge Realty",
       "commission": 5,
-      "street_number": 100,
-      "unit_number": "",
-      "street": "Main Street",
-      "city": "Anytown",
-      "zip": "12345",
-      "state": "CA"
+      "location": null
     },
     {
       "name": "CrestView Estates",
       "commission": 6,
-      "street_number": 200,
-      "unit_number": "",
-      "street": "Elm Street",
-      "city": "Othertown",
-      "zip": "54321",
-      "state": "NY"
+      "location": null
     },
     {
       "name": "MapleOak Properties",
       "commission": 4,
-      "street_number": 300,
-      "unit_number": "",
-      "street": "Oak Street",
-      "city": "Anothertown",
-      "zip": "67890",
-      "state": "TX"
+      "location": null
     }
   ]
 }

@@ -31,14 +31,30 @@ def init_db(path: str = 'mock_data.json'):
     # Loading Data
     appliances_collection.insert_many(data[db.TABLES.APPLIANCES])
     locations_collection.insert_many(data[db.TABLES.LOCATIONS])
-    companies_collection.insert_many(data[db.TABLES.COMPANIES])
     owners_collection.insert_many(data[db.TABLES.OWNERS])
 
 
     owners = list(owners_collection.find())
     locations = list(locations_collection.find())
-    companies = list(companies_collection.find())
     appliances = list(appliances_collection.find())
+
+    # fix companies
+
+    companies_collection.insert_many(data[db.TABLES.COMPANIES])
+
+    companies_collection.update_one(
+        {db.COMPANY.name: "BrigthBridge Realty"},
+        { "$set": {db.COMPANY.location: locations[2]}})
+    
+    companies_collection.update_one(
+        {db.COMPANY.name: "CrestView Estates"},
+        { "$set": {db.COMPANY.location: locations[3]}})
+    
+    companies_collection.update_one(
+        {db.COMPANY.name: "MapleOak Properties"},
+        { "$set": {db.COMPANY.location: locations[4]}})
+    
+    companies = list(companies_collection.find())
 
 
     # fix agents

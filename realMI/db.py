@@ -111,12 +111,7 @@ class COMPANY:
 
     name = "name"
     commission = "commission"
-    street_number = "street_number"
-    unit_number = "unit_number"
-    street = "street"
-    city = "city"
-    zip = "zip"
-    state = "state"
+    location = "location"
 
 def setup():
 
