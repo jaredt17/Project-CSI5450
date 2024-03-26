@@ -31,19 +31,16 @@ class HomeType:
         # If they select 2 floors it cant be an apartment etc.
         # Call HomeType.validate() returns true or false
     def validate(user_input: str, floor_space: int, floors: int, bed_rooms: int, land_size: int) -> str:
-        print("entered validation step:  ")
-        print(user_input)
-        print(floors)
-        
         # todo add more here as needed, we can also validate all other inputs in forms for other collections too
-        
-        if floor_space >= 6000 and land_size > 2 and user_input == 'mansion':
-            return True
-        
-        if floors > 1 and user_input == 'apartment':
-            print("Floors was greater than 1 and apartment set")
-            return False
-        
+        match user_input:
+            case "mansion":
+                if floor_space < 6000 and land_size < 2:
+                    return False
+            case "apartment":
+                if floors > 1:
+                    return False
+            case _ :
+                return True
         # Should return True by default?
         return True
 

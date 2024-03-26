@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
+from bson import ObjectId
 import db
 
 from bson import ObjectId
@@ -39,16 +40,19 @@ def list_homes():
 # Adding a home form - make sure this is the approach we should be using
 @app.route('/add_home', methods=['GET', 'POST'])
 def add_home():
+    # Query the database for appliances before rendering the form
+    appliances = list(appliances_collection.find())
     insert = True # start as true until some check fails
     if request.method == 'POST':
         try:
+
             # todo: fix this to actually validate the user input was good otherwise
             floor_space = int(request.form.get('floor_space', 0))
             floors = int(request.form.get('floors', 0))
             bed_rooms = int(request.form.get('bed_rooms', 0))
             bath_rooms = float(request.form.get('bath_rooms', 0.0))  # Assuming bathrooms can be fractions
             # land size needs rework to acres to sq ft
-            land_size = int(request.form.get('land_size', 0))
+            land_size = float(request.form.get('land_size', 0.0))
             year_constructed = int(request.form.get('year_constructed', 0))
             
             # compare this to validate
@@ -64,6 +68,11 @@ def add_home():
                 insert = False
             else:
                 print("Home Passed validation") 
+
+            # Extract the list of selected appliance IDs from the form
+            selected_appliance_ids = request.form.getlist('appliances')
+            # Fetch the full documents for the selected appliances
+            selected_appliances = list(appliances_collection.find({"_id": {"$in": [ObjectId(id) for id in selected_appliance_ids]}}))
             
             home_data = {
                 db.HOME.floor_space: floor_space,
@@ -73,6 +82,7 @@ def add_home():
                 db.HOME.land_size: land_size,
                 db.HOME.year_constructed: year_constructed,
                 db.HOME.home_type: home_type_user_input,
+                db.HOME.appliances: selected_appliances
             }
             
             if insert == True:

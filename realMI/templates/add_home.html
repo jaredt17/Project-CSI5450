@@ -28,9 +28,14 @@
         <label for="bath_rooms">Bathrooms:</label>
         <input type="number" id="bath_rooms" name="bath_rooms" step="0.5"><br>
         <label for="land_size">Land Size:</label>
-        <input type="number" id="land_size" name="land_size"><br>
+        <input type="number" id="land_size" name="land_size" step="0.1"><br>
         <label for="year_constructed">Year Constructed:</label>
         <input type="number" id="year_constructed" name="year_constructed"><br>
+        <label for="appliances">Appliances:</label><br>
+        {% for appliance in appliances %}
+            <input type="checkbox" id="appliance_{{appliance['_id']}}" name="appliances" value="{{appliance['_id']}}">
+            <label for="appliance_{{appliance['_id']}}">{{ appliance['name'] }} ({{ appliance['make'] }} - {{ appliance['model'] }})</label><br>
+        {% endfor %}
         <label for="home_type">Home Type:</label>
         <select id="home_type" name="home_type">
             <option value="house">House</option>
