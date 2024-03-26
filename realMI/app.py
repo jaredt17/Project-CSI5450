@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 import db
 
+from bson import ObjectId
 
 from init_db import init_db
 
