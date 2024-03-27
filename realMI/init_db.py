@@ -1,5 +1,6 @@
 import json
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 
 import db
 
@@ -92,21 +93,47 @@ def init_db(path: str = 'mock_data.json'):
 
     homes = list(homes_collection.find())
 
-    # fix transactions
-    transactions_collection.insert_many(data[db.TABLES.TRANSACTIONS])
+    # # fix transactions
+    # transactions_collection.insert_many(data[db.TABLES.TRANSACTIONS])
 
-    transactions_collection.update_one(
-        {db.TRANSACTION.date: "2023-01-15"},
-        {"$set": {db.TRANSACTION.home: homes[0],
-                  db.TRANSACTION.owner: owners[0],
-                  db.TRANSACTION.agent: agents[0],
-                  db.TRANSACTION.company: companies[0]}}
-    )
+    # transactions_collection.update_one(
+    #     {db.TRANSACTION.date: "2023-01-15"},
+    #     {"$set": {db.TRANSACTION.home: homes[0],
+    #               db.TRANSACTION.owner: owners[0],
+    #               db.TRANSACTION.agent: agents[0],
+    #               db.TRANSACTION.company: companies[0]}}
+    # )
 
-    transactions_collection.update_one(
-        {db.TRANSACTION.date: "2023-02-20"}, 
-        {"$set": {db.TRANSACTION.home: homes[1],
-                  db.TRANSACTION.owner: owners[1],
-                  db.TRANSACTION.agent: agents[1],
-                  db.TRANSACTION.company: companies[2]}}
-    )
+    # transactions_collection.update_one(
+    #     {db.TRANSACTION.date: "2023-02-20"}, 
+    #     {"$set": {db.TRANSACTION.home: homes[1],
+    #               db.TRANSACTION.owner: owners[1],
+    #               db.TRANSACTION.agent: agents[1],
+    #               db.TRANSACTION.company: companies[2]}}
+    # )
+
+    # Randomly generate transactions
+    for _ in range(10):  # Number of transactions to create
+        home = random.choice(homes)
+        owner = random.choice(owners)
+        agent = random.choice(agents)
+        company = random.choice(companies)
+
+        # print(home)
+        
+        # Random date within the last year
+        transaction_date = datetime.now() - timedelta(days=random.randint(0, 365))
+        
+        # Random price
+        transaction_price = round(random.uniform(100000, 300000), 2)
+        
+        transaction = {
+            'home': home['_id'],
+            'owner': owner['_id'],
+            'agent': agent['_id'],
+            'company': company['_id'],
+            'date': transaction_date,
+            'price': transaction_price
+        }
+        
+        transactions_collection.insert_one(transaction)

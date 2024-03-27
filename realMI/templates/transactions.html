@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+<h1>All Transactions</h1>
+
+{% for trans in transactions %}
+    <div class="transaction-card">
+        <h2>Transaction on {{ trans.date.strftime('%Y-%m-%d') }}</h2>
+        <p><strong>Price:</strong> ${{ trans.price }}</p>
+        <h3>Home Details:</h3>
+        {% if trans.home_details != "Home not found" %}
+        <p><strong>Address:</strong> {{ trans.full_address }}</p>
+        <p><strong>Floor Space:</strong> {{ trans.home_details['floor_space'] }} sqft</p>
+        <p><strong>Bedrooms:</strong> {{ trans.home_details['bed_rooms'] }}</p>
+        <p><strong>Bathrooms:</strong> {{ trans.home_details['bath_rooms'] }}</p>
+        <!-- Include more home details as needed -->
+        {% else %}
+        <p>{{ trans.home_details }}</p>
+        {% endif %}
+    </div>
+{% else %}
+<p>No transactions found.</p>
+{% endfor %}
+{% endblock %}

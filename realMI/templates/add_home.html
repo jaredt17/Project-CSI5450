@@ -41,6 +41,34 @@
                 <option value="townhome">Townhome</option>
                 <option value="condo">Condo</option>
             </select><br>
+
+            <!-- LOCATION ADDING -------------------  -->
+            <label for="street_number">Street Number:</label>
+            <input type="text" id="street_number" name="street_number" required><br>
+
+            <label for="unit_number">Unit Number:</label>
+            <input type="text" id="unit_number" name="unit_number"><br> <!-- This can be optional -->
+
+            <label for="street">Street:</label>
+            <input type="text" id="street" name="street" required><br>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required><br>
+
+            <label for="zip">ZIP Code:</label>
+            <input type="text" id="zip" name="zip" required><br>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required><br>
+
+            <label for="county">County:</label>
+            <input type="text" id="county" name="county" required><br>
+
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" required><br>
+            
+            <!-- LOCATION ADDING DONE -------------------  -->
+            
             <label for="owner">Owner:</label>
             <select name="owner" id="owner" required>
                 <option value="">Select Owner</option>
@@ -48,7 +76,15 @@
                 <option value="{{ owner['_id'] }}">{{ owner['first_name'] }} {{ owner['last_name'] }}</option>
                 {% endfor %}
             </select><br>
-            <!-- You can extend this form to include appliances, owners, and locations -->
+            <label for="for_sale">For Sale:</label>
+            <input type="checkbox" id="for_sale" name="for_sale" value="True" checked="checked" onchange="updateForSaleValue(this.checked);"><br>
+            <input type="hidden" id="for_sale_hidden" name="for_sale" value="True"> <!-- Default value is True -->
+            <script>
+                function updateForSaleValue(isChecked) {
+                    document.getElementById('for_sale_hidden').value = isChecked ? "True" : "False";
+                }
+            </script>
+            <!-- extend this form to include appliances, owners, and locations -->
             <input type="submit" value="Add Home">
         </form>
 {% endblock %}

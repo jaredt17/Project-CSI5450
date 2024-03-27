@@ -55,6 +55,7 @@ class HOME:
     home_type = "home_type"
     appliances = "appliances"
     owner = "owner"
+    for_sale = "for_sale"
     location = "location"
 
 

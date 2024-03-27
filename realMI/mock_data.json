@@ -10,6 +10,7 @@
       "home_type": "house",
       "appliances": [],
       "owner": null,
+      "for_sale": false,
       "location": null
     },
     {
@@ -22,6 +23,7 @@
       "home_type": "apartment",
       "appliances": [],
       "owner": null,
+      "for_sale": true,
       "location": null
     }
   ],

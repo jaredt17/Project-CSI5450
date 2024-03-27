@@ -66,7 +66,7 @@ def add_home():
     insert = True # start as true until some check fails
     if request.method == 'POST':
         try:
-
+            print(request.form)
             # todo: fix this to actually validate the user input was good otherwise
             floor_space = int(request.form.get('floor_space', 0))
             floors = int(request.form.get('floors', 0))
@@ -75,6 +75,7 @@ def add_home():
             # land size needs rework to acres to sq ft
             land_size = float(request.form.get('land_size', 0.0))
             year_constructed = int(request.form.get('year_constructed', 0))
+            for_sale = request.form.get('for_sale') == 'True'
             
             # compare this to validate
             home_type_user_input = request.form.get('home_type')
@@ -99,6 +100,23 @@ def add_home():
             # Find the complete owner document including its _id
             owner_document = owners_collection.find_one({"_id": ObjectId(owner_id)})
 
+            # GET LOCATION DATA IN HERE
+            # Extract location information from the form
+            location_info = {
+                'street_number': request.form.get('street_number'),
+                'unit_number': request.form.get('unit_number', ''),
+                'street': request.form.get('street'),
+                'city': request.form.get('city'),
+                'zip': request.form.get('zip'),
+                'state': request.form.get('state'),
+                'county': request.form.get('county'),
+                'country': request.form.get('country'),
+            }
+            # Insert the location into the locations collection and get the inserted ID
+            inserted_location = locations_collection.insert_one(location_info).inserted_id
+            # Now retrieve the full document with the generated _id to embed
+            location_document = locations_collection.find_one({"_id": inserted_location})
+
             home_data = {
                 db.HOME.floor_space: floor_space,
                 db.HOME.floors: floors,
@@ -108,7 +126,9 @@ def add_home():
                 db.HOME.year_constructed: year_constructed,
                 db.HOME.home_type: home_type_user_input,
                 db.HOME.appliances: selected_appliances,
-                db.HOME.owner: owner_document
+                db.HOME.owner: owner_document,
+                db.HOME.for_sale: for_sale,
+                db.HOME.location: location_document
             }
             
             if insert == True:
@@ -172,3 +192,32 @@ def add_agent():
         return redirect(url_for('add_agent'))
     return render_template('add_agent.html', companies=companies)
    
+@app.route('/transactions')
+def transactions():
+    # Fetch all transactions and the related home details
+    all_transactions = transactions_collection.find().sort('date', -1)  # Newest transactions first
+    transactions_details = []
+
+    for trans in all_transactions:
+        # Fetch each home by its ID stored in the transaction
+        home = homes_collection.find_one({"_id": trans['home']})
+        # Check if the home document was found
+        if home:
+            # Extract the location subdocument
+            location = home.get('location', {})
+            # Prepare a full address string using the location details
+            full_address = f"{location.get('street_number', '')} {location.get('street', '')}, " \
+                           f"{location.get('city', '')}, {location.get('state', '')} " \
+                           f"{location.get('zip', '')}"
+            # Combine transaction, home, and location details
+            transaction_data = {
+                "date": trans["date"],
+                "price": trans["price"],
+                "home_details": home,
+                "full_address": full_address  # Add the full address to the transaction data
+            }
+            transactions_details.append(transaction_data)
+        else:
+            transactions_details.append({"date": trans["date"], "price": trans["price"], "home_details": "Home not found"})
+    
+    return render_template('transactions.html', transactions=transactions_details)

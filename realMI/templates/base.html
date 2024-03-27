@@ -73,6 +73,13 @@
             background-color: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+        .transaction-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -82,6 +89,7 @@
         <a href="{{ url_for('add_home') }}">Add Home</a>
         <a href="{{ url_for('add_owner') }}">Add Owner</a>
         <a href="{{ url_for('add_agent') }}">Add Agent</a>
+        <a href="{{ url_for('transactions') }}">Transactions</a>
         <!-- Add more navigation links as needed -->
     </div>
 
