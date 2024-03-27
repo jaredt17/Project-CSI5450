@@ -9,15 +9,32 @@
     <div class="transaction-card">
         <h2>Transaction on {{ trans.date.strftime('%Y-%m-%d') }}</h2>
         <p><strong>Price:</strong> ${{ trans.price }}</p>
+
         <h3>Home Details:</h3>
         {% if trans.home_details != "Home not found" %}
-        <p><strong>Address:</strong> {{ trans.full_address }}</p>
+        <p><strong>Address:</strong> {{ trans.home_details['location']['street'] }}, 
+           {{ trans.home_details['location']['city'] }}</p>
         <p><strong>Floor Space:</strong> {{ trans.home_details['floor_space'] }} sqft</p>
         <p><strong>Bedrooms:</strong> {{ trans.home_details['bed_rooms'] }}</p>
         <p><strong>Bathrooms:</strong> {{ trans.home_details['bath_rooms'] }}</p>
-        <!-- Include more home details as needed -->
         {% else %}
         <p>{{ trans.home_details }}</p>
+        {% endif %}
+
+        <h3>Agent Details:</h3>
+        <!-- Check if agent details exist -->
+        {% if trans.agent_details %}
+        <p><strong>Name:</strong> {{ trans.agent_details['first_name'] }} {{ trans.agent_details['last_name'] }}</p>
+        {% else %}
+        <p>Agent details not found</p>
+        {% endif %}
+
+        <h3>Company Details:</h3>
+        <!-- Check if company details exist -->
+        {% if trans.company_details %}
+        <p><strong>Name:</strong> {{ trans.company_details['name'] }}</p>
+        {% else %}
+        <p>Company details not found</p>
         {% endif %}
     </div>
 {% else %}

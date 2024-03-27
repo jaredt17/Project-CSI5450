@@ -201,6 +201,8 @@ def transactions():
     for trans in all_transactions:
         # Fetch each home by its ID stored in the transaction
         home = homes_collection.find_one({"_id": trans['home']})
+        agent = agents_collection.find_one({"_id": trans['agent']})
+        company = companies_collection.find_one({"_id": trans['company']})
         # Check if the home document was found
         if home:
             # Extract the location subdocument
@@ -214,6 +216,8 @@ def transactions():
                 "date": trans["date"],
                 "price": trans["price"],
                 "home_details": home,
+                "agent_details": agent if agent else "Agent details not found",
+                "company_details": company if company else "Company details not found",
                 "full_address": full_address  # Add the full address to the transaction data
             }
             transactions_details.append(transaction_data)

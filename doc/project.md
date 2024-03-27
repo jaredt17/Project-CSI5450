@@ -38,7 +38,7 @@ Typical information kept in the database includes:
 
 Design the J2EE system keeping in mind that users of this system may ask some of the following questions for a variety of reasons.
 
-1)	List all the homes owned by a given owner in a given city. 
+1)	List all the homes owned by a given owner in a given city.  - DONE
 2)	List all the homes that were sold more than once. 
 3)	Find the most expensive home an owner ever bought.
 4)	Find all the homes that include all e appliances by the same maker.
@@ -50,10 +50,11 @@ Design the J2EE system keeping in mind that users of this system may ask some of
 10)	Find homes that up for sale in a given city that meet certain buyer choices such as number of bedrooms, baths, etc
 
 You also need to consider some of the following operations:
-1)	Adding an agent into the database
-2)	Adding a new home to the database
-3)	Moving a home from available for sale list to the owned list
+1)	Adding an agent into the database - DONE
+2)	Adding a new home to the database - DONE
+3)	Moving a home from available for sale list to the owned list - WIP
 4)	Making a person a home owner and consistently changing all related information.
+    - Need to add modify existing home for this
 
 
 The implementation should preserve all relationships. 
