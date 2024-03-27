@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Agent</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Add Agent{% endblock %}
+
+{% block content %}
     <h1>Add a New Agent</h1>
 
     <!-- Display Flash Messages -->
@@ -31,5 +28,4 @@
         <!-- You can extend this form to include appliances, owners, and locations -->
         <input type="submit" value="Add Agent">
     </form>
-</body>
-</html>
+{% endblock %}

@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>List of Homes</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}List Homes{% endblock %}
+
+{% block content %}
     <h1>List of Homes</h1>
     <form action="/homes" method="get">
         <label for="city">City:</label>
@@ -25,7 +23,7 @@
         <input type="submit" value="Filter Homes">
     </form>
     {% for home in homes %}
-    <div>
+    <div class="home-card">
         <p>Address: {{ home.location.street_number }} {{ home.location.street }} {{ home.location.city }} {{ home.location.state }}</p>
         <p>Owner: {{ home.owner.first_name }} {{ home.owner.last_name }}</p>
         <p>Floor space: {{ home.floor_space }} | Floors: {{ home.floors }} | Bedrooms: {{ home.bed_rooms }} | Bathrooms: {{ home.bath_rooms }}</p>
@@ -33,5 +31,4 @@
     {% else %}
     <p>No homes found.</p>
     {% endfor %}
-</body>
-</html>
+{% endblock %}
