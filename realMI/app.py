@@ -43,6 +43,7 @@ def list_homes():
     # Retrieve query parameters
     selected_city = request.args.get('city')
     owner_id = request.args.get('owner_id')
+    multiple_sales_filter = request.args.get('multiple_sales') == '1'
 
     # Construct the query
     query = {}
@@ -50,6 +51,20 @@ def list_homes():
         query["location.city"] = selected_city
     if owner_id:
         query["owner._id"] = ObjectId(owner_id)
+
+    if multiple_sales_filter:
+        pipeline = [
+            {"$group": {
+                "_id": "$home",
+                "count": {"$sum": 1}
+            }},
+            {"$match": {
+                "count": {"$gt": 1}
+            }}
+        ]
+        multiple_sales = transactions_collection.aggregate(pipeline)
+        home_ids = [sale['_id'] for sale in multiple_sales]
+        query["_id"] = {"$in": home_ids}
 
     # Retrieve the filtered list of homes based on the query
     homes = list(homes_collection.find(query))
@@ -203,6 +218,7 @@ def transactions():
         home = homes_collection.find_one({"_id": trans['home']})
         agent = agents_collection.find_one({"_id": trans['agent']})
         company = companies_collection.find_one({"_id": trans['company']})
+        owner = owners_collection.find_one({"_id": trans['owner']})
         # Check if the home document was found
         if home:
             # Extract the location subdocument
@@ -216,10 +232,13 @@ def transactions():
                 "date": trans["date"],
                 "price": trans["price"],
                 "home_details": home,
+                "owner_details": owner,
                 "agent_details": agent if agent else "Agent details not found",
                 "company_details": company if company else "Company details not found",
                 "full_address": full_address  # Add the full address to the transaction data
             }
+
+            # print(owner)
             transactions_details.append(transaction_data)
         else:
             transactions_details.append({"date": trans["date"], "price": trans["price"], "home_details": "Home not found"})

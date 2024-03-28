@@ -20,8 +20,15 @@
             <option value="{{ owner['_id'] }}">{{ owner['first_name'] }} {{ owner['last_name'] }}</option>
             {% endfor %}
         </select>
+            <!-- Checkbox for showing homes sold multiple times -->
+        <div>
+            <input type="checkbox" id="multiple_sales" name="multiple_sales" value="1"
+                {% if request.args.get('multiple_sales') == '1' %}checked{% endif %}>
+            <label for="multiple_sales">Show Homes Sold Multiple Times</label>
+        </div>
         <input type="submit" value="Filter Homes">
     </form>
+
     {% for home in homes %}
     <div class="home-card">
         <p>Address: {{ home.location.street_number }} {{ home.location.street }} {{ home.location.city }} {{ home.location.state }}</p>

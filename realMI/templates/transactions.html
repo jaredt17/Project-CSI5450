@@ -21,6 +21,13 @@
         <p>{{ trans.home_details }}</p>
         {% endif %}
 
+        <h3>Owner Details:</h3>
+        {% if trans.owner_details %}
+        <p><strong>Name:</strong> {{ trans.owner_details['first_name'] }} {{ trans.owner_details['last_name'] }}</p>
+        {% else %}
+        <p>Owner details not found</p>
+        {% endif %}
+
         <h3>Agent Details:</h3>
         <!-- Check if agent details exist -->
         {% if trans.agent_details %}
