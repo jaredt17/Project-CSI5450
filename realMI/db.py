@@ -100,7 +100,8 @@ class OWNER:
 
 class TRANSACTION:
 
-    owner = "owner"
+    seller = "seller"
+    buyer = "buyer"
     agent = "agent"
     company = "company"
     home = "home"
