@@ -1,4 +1,23 @@
+from pymongo import MongoClient
+from bson import ObjectId
+import db
+
+from bson import ObjectId
+
 # Queries
+
+client = MongoClient()
+client.drop_database(db.DB)
+database = client['realmi']
+
+# Define collections
+homes_collection = database['HOMES']
+locations_collection = database["LOCATIONS"]
+appliances_collection = database["APPLIANCES"]
+agents_collection = database["AGENTS"]
+owners_collection = database["OWNERS"]
+transactions_collection = database["TRANSACTIONS"]
+companies_collection = database["COMPANIES"]
 
 
 def list_homes_by_owner_and_city(owner, city):
@@ -7,7 +26,18 @@ def list_homes_by_owner_and_city(owner, city):
 
 def list_homes_sold_multiple_times():
     """List all the homes that were sold more than once.""" 
-    pass
+    duplicates = transactions_collection.aggregate({
+        "$group": {
+            "_id": "$home",
+            "count": {"$sum": 1}
+        },
+        "$match": {
+            "count": {"$gt": 1}
+        }
+    })
+
+    return duplicates
+
 
 def find_highest_selling_home(owner):
     """Find the most expensive home an owner ever bought."""
@@ -17,7 +47,7 @@ def find_homes_with_appliances_of_make(make):
     """Find all the homes that include all e appliances by the same maker."""
     pass
 
-def find_owners_who_():
+def find_all_homes_owner_used_to_own():
     """Find owners who do not own the homes they used to own. """
     pass
 

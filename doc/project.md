@@ -39,7 +39,7 @@ Typical information kept in the database includes:
 Design the J2EE system keeping in mind that users of this system may ask some of the following questions for a variety of reasons.
 
 1)	List all the homes owned by a given owner in a given city.  - DONE
-2)	List all the homes that were sold more than once. 
+2)	List all the homes that were sold more than once. - DONE - Query created -VW
 3)	Find the most expensive home an owner ever bought.
 4)	Find all the homes that include all e appliances by the same maker.
 5)	Find owners who do not own the homes they used to own. 
