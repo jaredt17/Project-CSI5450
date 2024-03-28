@@ -29,13 +29,6 @@
         <input type="submit" value="Filter Homes">
     </form>
 
-    <!-- Homes Sold More than Once -->
-    <!-- Add this form somewhere in your list_homes.html -->
-    <form action="{{ url_for('list_homes') }}" method="get">
-        <input type="hidden" name="filter" value="multiple_sales">
-        <button type="submit">Show Homes Sold Multiple Times</button>
-    </form>
-
     {% for home in homes %}
     <div class="home-card">
         <p>Address: {{ home.location.street_number }} {{ home.location.street }} {{ home.location.city }} {{ home.location.state }}</p>
