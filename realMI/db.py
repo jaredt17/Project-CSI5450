@@ -5,6 +5,19 @@ from pymongo import MongoClient
 import json
 from bson import ObjectId
 
+
+match = "$match"
+project = "$project"
+concat = "$concat"
+group = "$group"
+multiply = "$multiply"
+unwind = "$unwind"
+divide = "$divide"
+lookup = "$lookup"
+greater_than = "$gt"
+sum = "$sum"
+
+
 DB = "realmi"
 
 class TABLES:
