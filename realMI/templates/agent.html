@@ -41,9 +41,11 @@
         <tr>
             <td>{{ agent.first_name }}</td>
             <td>{{ agent.last_name }}</td>
+            <td>
             {% for comp in agent.companies %}
-            <td>{{ comp.name }}</td>
+            {{ comp.name }}<br>
             {% endfor %}
+            </td>
         </tr>
     {% endfor %}
     </table>
