@@ -15,7 +15,7 @@
     {% endwith %}
  
 
-    <form action="/add_agent" method="post">
+    <form action="/agent" method="post">
         <label for="first_name">First Name:</label>
         <input type="text" id="first_name" name="first_name"><br>
         <label for="last_name">Last Name:</label>
@@ -28,4 +28,23 @@
         <!-- You can extend this form to include appliances, owners, and locations -->
         <input type="submit" value="Add Agent">
     </form>
+
+    <h1>List of Agents</h1>
+
+    <table>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Companies</th>
+        </tr>
+    {% for agent in agents %}
+        <tr>
+            <td>{{ agent.first_name }}</td>
+            <td>{{ agent.last_name }}</td>
+            {% for comp in agent.companies %}
+            <td>{{ comp.name }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
 {% endblock %}
