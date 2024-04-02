@@ -268,4 +268,44 @@ def list_owners_with_most_expensive_homes_in_city(city):
 
 def find_home_for_sale(**params):
     """Find homes that up for sale in a given city that meet certain buyer choices such as number of bedrooms, baths, etc"""
-    pass
+
+    matches = { f"home_details.{k}": v for k, v in params}
+
+    pipeline = [
+        # Step 1: Filter transactions where the home is for sale (seller is null)
+        {
+            "$match": {
+                "seller": None  # Finding transactions with no seller (home is for sale)
+            }
+        },
+        # Step 2: Join with HOME collection to get home details
+        {
+            "$lookup": {
+                "from": "HOME",
+                "localField": "home",  # Assuming 'home' in TRANSACTION refers to HOME _id
+                "foreignField": "_id",  # Matching _id in HOME collection
+                "as": "home_details"
+            }
+        },
+        {"$unwind": "$home_details"},  # Deconstruct the home_details array
+        # Step 3: Filter homes based on the specified number of bedrooms and bathrooms
+        {
+            "$match": matches
+        },
+        # Project/format the output
+        {
+            "$project": {
+                "_id": 0,
+                "home_id": "$home",  # Show home id
+                "bedrooms": "$home_details.bed_rooms",
+                "bathrooms": "$home_details.bath_rooms",
+                "for_sale": {"$ifNull": ["$seller", True]},  # Indicate the home is for sale
+                "location": "$home_details.location",  # Assuming you store location info in the HOME collection
+                "price": "$price"  # Assuming price is in the TRANSACTION
+            }
+        }
+    ]
+
+    result = transactions_collection.aggregate(pipeline)
+
+    return pipeline
