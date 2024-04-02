@@ -70,6 +70,9 @@
     <p>Type: {{ home.home_type.capitalize() }}</p>
     <p>Owner: {{ home.owner.first_name }} {{ home.owner.last_name }}</p>
     <p>Floor space: {{ home.floor_space }} | Floors: {{ home.floors }} | Bedrooms: {{ home.bed_rooms }} | Bathrooms: {{ home.bath_rooms }}</p>
+    {% if home.for_sale_price %}
+    <p><strong>For Sale Price:</strong> ${{ home.for_sale_price }}</p>
+    {% endif %}
 </div>
 {% else %}
 <p>No homes found.</p>

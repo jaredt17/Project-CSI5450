@@ -38,34 +38,41 @@ def list_homes():
     owners = list(owners_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1}))
     home_types = homes_collection.distinct("home_type")
     for_sale_filter = request.args.get('for_sale') == 'on'
-    selected_owner_home_types = request.args.getlist('owner_home_types')
-    selected_city = request.args.get('city')
-    owner_id = request.args.get('owner_id')
-    multiple_sales_filter = request.args.get('multiple_sales') == '1'
-    selected_home_types = request.args.getlist('home_types')
+
     query = {}
+    # Include filters for city, owner, and home types here as per your existing logic
 
-    if selected_owner_home_types:
-        pipeline = [{"$match": query}, {"$group": {"_id": "$owner._id", "home_types": {"$addToSet": "$home_type"}, "owner_data": {"$first": "$owner"}}}, {"$match": {"home_types": {"$all": selected_owner_home_types}}}]
-        owners_with_all_types = list(homes_collection.aggregate(pipeline))
-        owner_ids_with_all_types = [owner['_id'] for owner in owners_with_all_types]
-        query["owner._id"] = {"$in": owner_ids_with_all_types} if owner_ids_with_all_types else None
-
-    if selected_city:
-        query["location.city"] = selected_city
-    if owner_id:
-        query["owner._id"] = ObjectId(owner_id)
-    if selected_home_types:
-        query["home_type"] = {"$in": selected_home_types}
-    if multiple_sales_filter:
-        multiple_sales_homes = [sale['_id'] for sale in transactions_collection.aggregate([{"$group": {"_id": "$home", "count": {"$sum": 1}}}, {"$match": {"count": {"$gt": 1}}}])]
-        query["_id"] = {"$in": multiple_sales_homes}
+    # Adjust query for homes for sale
     if for_sale_filter:
-        homes_for_sale_ids = [trans['home'] for trans in transactions_collection.find({"buyer": None}, {"home": 1})]
-        query["_id"] = {"$in": homes_for_sale_ids} if homes_for_sale_ids else None
+        homes_query = [
+            {
+                "$lookup": {
+                    "from": "TRANSACTIONS",
+                    "localField": "_id",
+                    "foreignField": "home",
+                    "as": "sale_info"
+                }
+            },
+            {
+                "$match": {
+                    "sale_info": {"$elemMatch": {"buyer": None}}
+                }
+            },
+            {
+                "$addFields": {
+                    "for_sale_price": {"$first": "$sale_info.price"}
+                }
+            }
+        ]
+        homes = list(homes_collection.aggregate(homes_query))
+    else:
+        homes = list(homes_collection.find(query))
 
-    homes = list(homes_collection.find(query))
-    return render_template('list_homes.html', homes=homes, cities=cities, owners=owners, home_types=home_types, selected_home_types=selected_home_types, selected_owner_home_types=selected_owner_home_types)
+    # Transform the homes for template rendering
+    for home in homes:
+        home['owner'] = owners_collection.find_one({"_id": home['owner']})
+
+    return render_template('list_homes.html', homes=homes, cities=cities, owners=owners, home_types=home_types)
 
 # Adding a home form - make sure this is the approach we should be using
 @app.route('/add_home', methods=['GET', 'POST'])
