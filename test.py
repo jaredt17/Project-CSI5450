@@ -2,6 +2,9 @@ from pymongo import MongoClient
 from realMI import db
 from bson import ObjectId
 
+
+print(db.LOCATION.city.value)
+
 client = MongoClient()
 
 database = client['realmi']

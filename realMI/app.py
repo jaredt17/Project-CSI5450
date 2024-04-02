@@ -289,17 +289,15 @@ def agent():
 
 
 @app.route('/companies', methods=['GET', 'POST'])
-def agent():
+def companies():
 
     if request.method == 'POST':
         try:
             name = request.form.get('name')
             commission = request.form.get('commission')
 
-            new_location = {
-
-            }
-
+            new_location = {v: request.form.get(v) for v in filter(lambda l: "__" not in l , dir(db.LOCATION))}
+            print(new_location)
             location = locations_collection.insert_one(new_location)
 
             company_data = {

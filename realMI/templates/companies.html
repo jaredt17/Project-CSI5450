@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Agent{% endblock %}
+
+{% block content %}
+    <h1>Add a New Comapny</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+ 
+
+    <form action="/companies" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+        <label for="commission">Commission:</label>
+        <input type="text" id="commission" name="commission"><br><br>
+        <label for="Location">Location:</label><br>
+
+        <!-- You can extend this form to include appliances, owners, and locations -->
+
+        <!-- LOCATION ADDING -------------------  -->
+        <label for="street_number">Street Number:</label>
+        <input type="text" id="street_number" name="street_number" required><br>
+
+        <label for="unit_number">Unit Number:</label>
+        <input type="text" id="unit_number" name="unit_number"><br> <!-- This can be optional -->
+
+        <label for="street">Street:</label>
+        <input type="text" id="street" name="street" required><br>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required><br>
+
+        <label for="zip">ZIP Code:</label>
+        <input type="text" id="zip" name="zip" required><br>
+
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required><br>
+
+        <label for="county">County:</label>
+        <input type="text" id="county" name="county" required><br>
+
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required><br>
+        <input type="submit" value="Add Company">
+
+        <!-- LOCATION ADDING DONE -------------------  -->
+    </form>
+
+    <h1>List of Companies</h1>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Commission</th>
+            <th>Location</th>
+        </tr>
+        {% for comp in companies %}
+        <tr>
+            <td>{{ comp.name }}</td>
+            <td>{{ comp.commission }}%</td>
+            <td>{{ comp.location.street_number }} {{ comp.location.street }} 
+                {% if comp.location.unit_number %}
+                    #{{ comp.location.unit_number }}
+                {% endif %}
+                <br>
+                {{ comp.location.city }}, {{ comp.location.state }} {{comp.location.zip}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
