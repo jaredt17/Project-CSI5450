@@ -166,48 +166,100 @@ def find_owners_who_own_apartments_and_mansions():
 
 def list_homes_below_price_in_city(price, city):
     """List all the homes below a price in a given city."""
-    # TODO: figure out hwo for_sale in HOMES works.
-    pass
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "TRANSACTION",
+                "localField": "_id",  # Assuming home _id is what TRANSACTION references
+                "foreignField": "home",  # 'home' in TRANSACTION refers to HOME _id
+                "as": "transactions"
+            }
+        },
+        # Step 2: Filter by city
+        {
+            "$match": {
+                "location.city": city
+            }
+        },
+        # Unwind transactions to filter individually
+        {
+            "$unwind": "$transactions"
+        },
+        # Step 3: Filter transactions below the specified price
+        {
+            "$match": {
+                "transactions.price": {"$lt": price}
+            }
+        },
+        # Optional: Group by home to aggregate transactions (if you want to compile transactions per home)
+        {
+            "$group": {
+                "_id": "$_id",
+                "location": {"$first": "$location"},
+                "transactions": {"$push": "$transactions"}
+            }
+        },
+        # Optional: Sort by transaction price
+        {
+            "$sort": {
+                "transactions.price": 1  # Adjust according to your needs
+            }
+        },
+        # Project/format the output
+        {
+            "$project": {
+                "_id": 0,
+                "address": "$location",
+                "transactions": 1
+            }
+        }
+    ]
+
+    result = homes_collection.aggregate(pipeline)
+
+    return result
+
 
 def list_owners_with_most_expensive_homes_in_city(city):
     """List owners who own all the most expensive homes in a given city"""
     pipeline = [
-    # Step 1: Join HOME collection with TRANSACTION to get home prices
-    {
-        "$lookup": {
-            "from": "TRANSACTION",
-            "localField": "_id",  # Assuming home _id is what TRANSACTION references
-            "foreignField": "home",  # Assuming 'home' in TRANSACTION refers to HOME _id
-            "as": "transactions"
+        # Step 1: Join HOME collection with TRANSACTION to get home prices
+        {
+            "$lookup": {
+                "from": "TRANSACTION",
+                "localField": "_id",  # Assuming home _id is what TRANSACTION references
+                "foreignField": "home",  # Assuming 'home' in TRANSACTION refers to HOME _id
+                "as": "transactions"
+            }
+        },
+        # Optional: If you want only the latest transaction for each home
+        {
+            "$addFields": {
+                "latest_transaction": {"$arrayElemAt": ["$transactions", -1]}  # Assuming the last transaction is the latest
+            }
+        },
+        # Step 2: Filter by city
+        {
+            "$match": {
+                "location.city": city
+            }
+        },
+        # Step 3: Sort by home value (price in the latest transaction)
+        {
+            "$sort": {
+                "latest_transaction.price": -1  # Adjust field path if your data structure is different
+            }
+        },
+        # Step 4: Project/format the output
+        {
+            "$project": {
+                "_id": 0,
+                "owner_name": {"$concat": ["$owner.first_name", " ", "$owner.last_name"]},
+                "home_value": "$latest_transaction.price",
+                "city": "$location.city"
+            }
         }
-    },
-    # Optional: If you want only the latest transaction for each home
-    {
-        "$addFields": {
-            "latest_transaction": {"$arrayElemAt": ["$transactions", -1]}  # Assuming the last transaction is the latest
-        }
-    },
-    # Step 2: Filter by city
-    {
-        "$match": {
-            "location.city": city
-        }
-    },
-    # Step 3: Sort by home value (price in the latest transaction)
-    {
-        "$sort": {
-            "latest_transaction.price": -1  # Adjust field path if your data structure is different
-        }
-    },
-    # Step 4: Project/format the output
-    {
-        "$project": {
-            "_id": 0,
-            "owner_name": {"$concat": ["$owner.first_name", " ", "$owner.last_name"]},
-            "home_value": "$latest_transaction.price",
-            "city": "$location.city"
-        }
-    }]
+    ]
 
     # Execute aggregation pipeline
     result = homes_collection.aggregate(pipeline)
