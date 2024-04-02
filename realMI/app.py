@@ -40,17 +40,52 @@ def list_homes():
     # Fetch all owners for the dropdown
     owners = list(owners_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1}))
 
+    home_types = homes_collection.distinct("home_type")
+
+    # for the query in project md
+    selected_owner_home_types = request.args.getlist('owner_home_types')
+
     # Retrieve query parameters
     selected_city = request.args.get('city')
     owner_id = request.args.get('owner_id')
     multiple_sales_filter = request.args.get('multiple_sales') == '1'
+    
+    selected_home_types = request.args.getlist('home_types')
 
     # Construct the query
     query = {}
+
+    # If selected owner home types are provided, adjust the query
+    if selected_owner_home_types:
+        # Aggregation pipeline to match owners with all selected home types
+        pipeline = [
+            {"$match": query},  # Apply existing filters
+            {"$group": {
+                "_id": "$owner._id",
+                "home_types": {"$addToSet": "$home_type"},
+                "owner_data": {"$first": "$owner"}
+            }},
+            {"$match": {
+                "home_types": {"$all": selected_owner_home_types}
+            }}
+        ]
+        owners_with_all_types = list(homes_collection.aggregate(pipeline))
+        owner_ids_with_all_types = [owner['_id'] for owner in owners_with_all_types]
+
+        # Adjust the main homes query to include only homes owned by these owners
+        if owner_ids_with_all_types:
+            query["owner._id"] = {"$in": owner_ids_with_all_types}
+        else:
+            query["owner._id"] = None  # No owners match the criteria
+
     if selected_city:
         query["location.city"] = selected_city
     if owner_id:
         query["owner._id"] = ObjectId(owner_id)
+
+    # If selected home types are provided, adjust the query
+    if selected_home_types:
+        query["home_type"] = {"$in": selected_home_types}
 
     if multiple_sales_filter:
         pipeline = [
@@ -69,7 +104,7 @@ def list_homes():
     # Retrieve the filtered list of homes based on the query
     homes = list(homes_collection.find(query))
 
-    return render_template('list_homes.html', homes=homes, cities=cities, owners=owners)
+    return render_template('list_homes.html', homes=homes, cities=cities, owners=owners, home_types=home_types, selected_home_types=selected_home_types, selected_owner_home_types=selected_owner_home_types)
 
 # Adding a home form - make sure this is the approach we should be using
 @app.route('/add_home', methods=['GET', 'POST'])

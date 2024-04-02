@@ -118,6 +118,34 @@
             color: #333;
             margin-bottom: 10px;
         }
+        select[multiple] {
+            width: 200px; /* Set the width as desired */
+            height: auto; /* Adjust the height accordingly */
+            min-height: 100px; /* Provide a minimum height */
+        }
+        .home-types-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px; /* Space below the checkbox group */
+        }
+
+        /* Style each checkbox item */
+        .checkbox-item {
+            display: flex;
+            align-items: center; /* Align checkbox and label */
+        }
+
+        /* Style the checkboxes themselves if needed */
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 5px; /* Space between checkbox and label */
+            cursor: pointer; /* Makes the mouse cursor a pointer when hovering over the checkbox */
+        }
+
+        /* Style the labels */
+        .checkbox-item label {
+            cursor: pointer; /* Makes the mouse cursor a pointer when hovering over the label */
+        }
     </style>
 </head>
 <body>

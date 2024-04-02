@@ -19,7 +19,7 @@
       "bath_rooms": 1,
       "land_size": 0,
       "year_constructed": 2005,
-      "home_type": "apartment",
+      "home_type": "condo",
       "appliances": [],
       "owner": null,
       "location": null
@@ -43,7 +43,19 @@
       "bath_rooms": 2,
       "land_size": 0,
       "year_constructed": 2008,
-      "home_type": "condo",
+      "home_type": "apartment",
+      "appliances": [],
+      "owner": null,
+      "location": null
+    },
+    {
+      "floor_space": 750,
+      "floors": 2,
+      "bed_rooms": 3,
+      "bath_rooms": 2,
+      "land_size": 0,
+      "year_constructed": 2019,
+      "home_type": "townhome",
       "appliances": [],
       "owner": null,
       "location": null

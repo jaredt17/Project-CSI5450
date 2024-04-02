@@ -19,7 +19,40 @@
             {% for owner in owners %}
             <option value="{{ owner['_id'] }}">{{ owner['first_name'] }} {{ owner['last_name'] }}</option>
             {% endfor %}
-        </select>
+        </select> </br></br>
+
+        <!-- Multi-select dropdown for home types -->
+        <label for="home_types">Home Types:</label>
+        <div class="home-types-checkboxes">
+            {% for type in home_types %}
+                <div class="checkbox-item">
+                    <input type="checkbox" id="type_{{ type }}" name="home_types" value="{{ type }}"
+                        {% if type in selected_home_types %}checked{% endif %}>
+                    <label for="type_{{ type }}">{{ type.capitalize() }}</label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- OWNERS WITH MULTIPLE TYPES -->
+        <!-- Multi-select dropdown for owner home types -->
+        <h4>Find an Owner who Owns Multiple Types of Homes:</h4>
+        <div class="checkbox-group">
+            <label class="checkbox-inline">
+                <input type="checkbox" name="owner_home_types" value="apartment"> Apartment
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="owner_home_types" value="condo"> Condo
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="owner_home_types" value="house"> House
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="owner_home_types" value="mansion"> Mansion
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="owner_home_types" value="townhome"> Townhome
+            </label>
+        </div>
             <!-- Checkbox for showing homes sold multiple times -->
         <div>
             <input type="checkbox" id="multiple_sales" name="multiple_sales" value="1"
@@ -32,7 +65,7 @@
     {% for home in homes %}
     <div class="home-card">
         <p>Address: {{ home.location.street_number }} {{ home.location.street }} {{ home.location.city }} {{ home.location.state }}</p>
-        <p>Type: {{ home.home_type }}</p>
+        <p>Type: {{ home.home_type.capitalize() }}</p>
         <p>Owner: {{ home.owner.first_name }} {{ home.owner.last_name }}</p>
         <p>Floor space: {{ home.floor_space }} | Floors: {{ home.floors }} | Bedrooms: {{ home.bed_rooms }} | Bathrooms: {{ home.bath_rooms }}</p>
     </div>

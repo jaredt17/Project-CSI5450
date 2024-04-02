@@ -106,7 +106,7 @@ def init_db(path: str = 'mock_data.json'):
     )
     homes_collection.update_one(
         {db.HOME.year_constructed: 2001},
-        { "$set": {db.HOME.owner: owners[3],
+        { "$set": {db.HOME.owner: owners[4],
                    db.HOME.location: locations[5],
                    db.HOME.appliances: appliances[3:4]}}
     )
@@ -116,6 +116,13 @@ def init_db(path: str = 'mock_data.json'):
         { "$set": {db.HOME.owner: owners[4],
                    db.HOME.location: locations[6],
                    db.HOME.appliances: appliances[2:3]}}
+    )
+
+    homes_collection.update_one(
+        {db.HOME.year_constructed: 2019},
+        { "$set": {db.HOME.owner: owners[3],
+                   db.HOME.location: locations[4],
+                   db.HOME.appliances: appliances[1:3]}}
     )
 
     homes = list(homes_collection.find())
