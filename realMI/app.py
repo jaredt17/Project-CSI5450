@@ -286,3 +286,34 @@ def agent():
         return redirect(url_for('agent'))
     
     return render_template('agent.html', companies=companies, agents=list(agents_collection.find()))
+
+
+@app.route('/companies', methods=['GET', 'POST'])
+def agent():
+
+    if request.method == 'POST':
+        try:
+            name = request.form.get('name')
+            commission = request.form.get('commission')
+
+            new_location = {
+
+            }
+
+            location = locations_collection.insert_one(new_location)
+
+            company_data = {
+                db.COMPANY.name: name,
+                db.COMPANY.commission: commission,
+                db.COMPANY.location: locations_collection.find_one({"_id": location.inserted_id})
+            }
+
+            companies_collection.insert_one(company_data)
+            flash('Company added successfully!', 'success')
+        except Exception as e:
+            flash(f'An error occurred: {e}', 'error')  # Flash an error message
+        return redirect(url_for('companies'))
+    
+    companies = list(companies_collection.find())
+    
+    return render_template('companies.html', companies=companies)
