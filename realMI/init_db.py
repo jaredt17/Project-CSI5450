@@ -175,7 +175,7 @@ def init_db(path: str = 'mock_data.json'):
         transactions_collection.insert_one(transaction)
 
     # Randomly generate transactions
-    for _ in range(6,10,1):  # Number of transactions to create
+    for _ in range(6,8,1):  # Number of transactions to create
         home = random.choice(homes)
         seller = random.choice(owners)
         buyer = random.choice(owners)
