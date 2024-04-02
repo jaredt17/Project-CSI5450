@@ -82,7 +82,7 @@ def init_db(path: str = 'mock_data.json'):
     )
     agents_collection.update_one(
         {db.AGENT.first_name: "Jon", db.AGENT.last_name: "Snow"},
-        { "$push": {db.AGENT.companies: companies[1:2]}}
+        { "$push": {db.AGENT.companies: companies[2]}}
     )
 
     agents = list(agents_collection.find())
