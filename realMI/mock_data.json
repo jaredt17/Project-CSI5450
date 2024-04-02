@@ -99,6 +99,26 @@
       "state": "TX",
       "county" : null,
       "country": "USA"
+    },
+    {
+      "street_number": 25421,
+      "unit_number": "",
+      "street": "Cherry Ln",
+      "city": "Rochester",
+      "zip": "48306",
+      "state": "MI",
+      "county" : "Oakland",
+      "country": "USA"
+    },
+    {
+      "street_number": 45212,
+      "unit_number": "",
+      "street": "River Bend Rd",
+      "city": "Macomb",
+      "zip": "48321",
+      "state": "MI",
+      "county" : "Macomb",
+      "country": "USA"
     }
   ],
   "APPLIANCES": [

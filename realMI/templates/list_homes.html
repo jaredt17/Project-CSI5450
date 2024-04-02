@@ -32,6 +32,7 @@
     {% for home in homes %}
     <div class="home-card">
         <p>Address: {{ home.location.street_number }} {{ home.location.street }} {{ home.location.city }} {{ home.location.state }}</p>
+        <p>Type: {{ home.home_type }}</p>
         <p>Owner: {{ home.owner.first_name }} {{ home.owner.last_name }}</p>
         <p>Floor space: {{ home.floor_space }} | Floors: {{ home.floors }} | Bedrooms: {{ home.bed_rooms }} | Bathrooms: {{ home.bath_rooms }}</p>
     </div>

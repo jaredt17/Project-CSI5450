@@ -71,6 +71,20 @@ def init_db(path: str = 'mock_data.json'):
         { "$push": {db.AGENT.companies: companies[2]}}
     )
 
+    agents_collection.update_one(
+        {db.AGENT.first_name: "Viljo", db.AGENT.last_name: "Wagner"},
+        { "$push": {db.AGENT.companies: companies[0]}}
+    )
+
+    agents_collection.update_one(
+        {db.AGENT.first_name: "Jared", db.AGENT.last_name: "Teller"},
+        { "$push": {db.AGENT.companies: companies[1]}}
+    )
+    agents_collection.update_one(
+        {db.AGENT.first_name: "Jon", db.AGENT.last_name: "Snow"},
+        { "$push": {db.AGENT.companies: companies[1:2]}}
+    )
+
     agents = list(agents_collection.find())
 
 
@@ -89,6 +103,19 @@ def init_db(path: str = 'mock_data.json'):
         { "$set": {db.HOME.owner: owners[1],
                    db.HOME.location: locations[1],
                    db.HOME.appliances: appliances}}
+    )
+    homes_collection.update_one(
+        {db.HOME.year_constructed: 2001},
+        { "$set": {db.HOME.owner: owners[3],
+                   db.HOME.location: locations[5],
+                   db.HOME.appliances: appliances[3:4]}}
+    )
+    
+    homes_collection.update_one(
+        {db.HOME.year_constructed: 2008},
+        { "$set": {db.HOME.owner: owners[4],
+                   db.HOME.location: locations[6],
+                   db.HOME.appliances: appliances[2:3]}}
     )
 
     homes = list(homes_collection.find())
