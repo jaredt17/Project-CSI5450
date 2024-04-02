@@ -23,6 +23,30 @@
       "appliances": [],
       "owner": null,
       "location": null
+    },
+    {
+      "floor_space": 6500,
+      "floors": 3,
+      "bed_rooms": 5,
+      "bath_rooms": 4,
+      "land_size": 1.2,
+      "year_constructed": 2001,
+      "home_type": "mansion",
+      "appliances": [],
+      "owner": null,
+      "location": null
+    },
+    {
+      "floor_space": 900,
+      "floors": 1,
+      "bed_rooms": 3,
+      "bath_rooms": 2,
+      "land_size": 0,
+      "year_constructed": 2008,
+      "home_type": "condo",
+      "appliances": [],
+      "owner": null,
+      "location": null
     }
   ],
   "LOCATIONS": [
@@ -117,6 +141,21 @@
       "first_name": "Jane",
       "last_name": "Smith",
       "companies": []
+    },
+    { 
+      "first_name": "Viljo",
+      "last_name": "Wagner",
+      "companies": []
+    },
+    { 
+      "first_name": "Jared",
+      "last_name": "Teller",
+      "companies": []
+    },
+    { 
+      "first_name": "Jon",
+      "last_name": "Snow",
+      "companies": []
     }
   ],
   "OWNERS": [
@@ -137,6 +176,33 @@
       "income": 60000,
       "age": 35,
       "profession": "Teacher"
+    },
+    {
+      "first_name": "Shane",
+      "last_name": "Rogers",
+      "ssn": "564-241-1222",
+      "no_dependents": 3,
+      "income": 56000,
+      "age": 28,
+      "profession": "Truck Driver"
+    },
+    {
+      "first_name": "Miranda",
+      "last_name": "Davis",
+      "ssn": "400-96-7841",
+      "no_dependents": 3,
+      "income": 90451,
+      "age": 43,
+      "profession": "Software Developer"
+    },
+    {
+      "first_name": "Larry",
+      "last_name": "Coleman",
+      "ssn": "348-81-3253",
+      "no_dependents": 1,
+      "income": 63251,
+      "age": 31,
+      "profession": "Nurse"
     }
   ],
   "TRANSACTIONS": [
