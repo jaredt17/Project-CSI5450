@@ -219,7 +219,7 @@ def transactions():
     return render_template('transactions.html', transactions=transactions_details)
 
 
-@app.route('/agent')
+@app.route('/agent', methods=['POST'])
 def agent():
 
     companies = list(companies_collection.find())
