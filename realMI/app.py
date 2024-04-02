@@ -214,44 +214,47 @@ def add_owner():
    
 @app.route('/transactions')
 def transactions():
-    # Fetch all transactions and the related home details
-    all_transactions = transactions_collection.find().sort('date', -1)  # Newest transactions first
+    owner_id = request.args.get('owner_id')
+    sort_order = int(request.args.get('sort_order', -1))
+    for_sale = request.args.get('for_sale', 'off')
+
+    query = {}
+    if owner_id:
+        query['seller'] = ObjectId(owner_id)
+    if for_sale == 'on':
+        query['buyer'] = None  # Add condition for homes that are for sale (have no buyer)
+
+    all_transactions = transactions_collection.find(query).sort('price', sort_order)
     transactions_details = []
 
     for trans in all_transactions:
-        # Fetch each home by its ID stored in the transaction
         home = homes_collection.find_one({"_id": trans['home']})
         agent = agents_collection.find_one({"_id": trans['agent']})
         company = companies_collection.find_one({"_id": trans['company']})
         owner = owners_collection.find_one({"_id": trans['seller']})
-        buyer = owners_collection.find_one({"_id": trans['buyer']})
-        
-        # Check if the home document was found
+        buyer = owners_collection.find_one({"_id": trans.get('buyer')})  # Use get() to safely handle missing buyer
+
         if home:
-            # Extract the location subdocument
             location = home.get('location', {})
-            # Prepare a full address string using the location details
             full_address = f"{location.get('street_number', '')} {location.get('street', '')}, " \
                            f"{location.get('city', '')}, {location.get('state', '')} " \
                            f"{location.get('zip', '')}"
-            # Combine transaction, home, and location details
             transaction_data = {
                 "date": trans["date"],
                 "price": trans["price"],
-                "buyer_details":  buyer,
+                "buyer_details": buyer,
                 "home_details": home,
                 "owner_details": owner,
                 "agent_details": agent if agent else "Agent details not found",
                 "company_details": company if company else "Company details not found",
-                "full_address": full_address  # Add the full address to the transaction data
+                "full_address": full_address
             }
-
-            # print(owner)
             transactions_details.append(transaction_data)
         else:
             transactions_details.append({"date": trans["date"], "price": trans["price"], "home_details": "Home not found"})
-    
-    return render_template('transactions.html', transactions=transactions_details)
+
+    owners = list(owners_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1}))
+    return render_template('transactions.html', transactions=transactions_details, owners=owners, for_sale=for_sale)
 
 
 @app.route('/agent', methods=['GET', 'POST'])

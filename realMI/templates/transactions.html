@@ -5,50 +5,75 @@
 {% block content %}
 <h1>All Transactions</h1>
 
-{% for trans in transactions %}
-    <div class="transaction-card">
-        <h2>Transaction on {{ trans.date.strftime('%Y-%m-%d') }}</h2>
-        <p><strong>Price:</strong> ${{ trans.price }}</p>
-
-        <h3>Home Details:</h3>
-        {% if trans.home_details != "Home not found" %}
-        <p><strong>Address:</strong> {{ trans.home_details['location']['street'] }}, 
-           {{ trans.home_details['location']['city'] }}</p>
-        <p><strong>Floor Space:</strong> {{ trans.home_details['floor_space'] }} sqft</p>
-        <p><strong>Bedrooms:</strong> {{ trans.home_details['bed_rooms'] }}</p>
-        <p><strong>Bathrooms:</strong> {{ trans.home_details['bath_rooms'] }}</p>
-        {% else %}
-        <p>{{ trans.home_details }}</p>
-        {% endif %}
-
-        <h3>Owner Details:</h3>
-        {% if trans.owner_details %}
-        <p><strong>Name:</strong> {{ trans.owner_details['first_name'] }} {{ trans.owner_details['last_name'] }}</p>
-        {% else %}
-        <p>Owner details not found</p>
-        {% endif %}
-
-        {% if trans.buyer_details %}
-        <h3> Buyer Details</h3>
-        <p><strong>Name:</strong> {{ trans.buyer_details['first_name'] }} {{ trans.buyer_details['last_name'] }}</p>
-        {% endif %}
-
-        <h3>Agent Details:</h3>
-        <!-- Check if agent details exist -->
-        {% if trans.agent_details %}
-        <p><strong>Name:</strong> {{ trans.agent_details['first_name'] }} {{ trans.agent_details['last_name'] }}</p>
-        {% else %}
-        <p>Agent details not found</p>
-        {% endif %}
-
-        <h3>Company Details:</h3>
-        <!-- Check if company details exist -->
-        {% if trans.company_details %}
-        <p><strong>Name:</strong> {{ trans.company_details['name'] }}</p>
-        {% else %}
-        <p>Company details not found</p>
-        {% endif %}
+<form action="" method="get">
+    <div>
+        <label for="owner_id">Filter by Owner:</label>
+        <select name="owner_id" id="owner_id">
+            <option value="">Select Owner</option>
+            {% for owner in owners %}
+            <option value="{{ owner._id }}">{{ owner.first_name }} {{ owner.last_name }}</option>
+            {% endfor %}
+        </select>
     </div>
+    <div>
+        <label for="sort_order">Sort by Price:</label>
+        <select name="sort_order" id="sort_order">
+            <option value="-1">Descending</option>
+            <option value="1">Ascending</option>
+        </select>
+    </div>
+    <div>
+        <input type="checkbox" name="for_sale" id="for_sale" value="on" {% if for_sale == 'on' %}checked{% endif %}>
+        <label for="for_sale">Show homes for sale</label>
+    </div>
+    <button type="submit">Apply Filters</button>
+</form>
+
+{% for trans in transactions %}
+<div class="transaction-card">
+    {% if trans.buyer_details %}
+    <h2>Home Sold</h2>
+    {% else %}
+    <h2>Home Listing</h2>
+    {% endif %}
+    <p><strong>Price:</strong> ${{ trans.price }}</p>
+    <h3>Home Details:</h3>
+    {% if trans.home_details != "Home not found" %}
+    <p><strong>Address:</strong> {{ trans.home_details['location']['street'] }}, 
+       {{ trans.home_details['location']['city'] }}</p>
+    <p><strong>Floor Space:</strong> {{ trans.home_details['floor_space'] }} sqft</p>
+    <p><strong>Bedrooms:</strong> {{ trans.home_details['bed_rooms'] }}</p>
+    <p><strong>Bathrooms:</strong> {{ trans.home_details['bath_rooms'] }}</p>
+    {% else %}
+    <p>{{ trans.home_details }}</p>
+    {% endif %}
+
+    <h3>Owner Details:</h3>
+    {% if trans.owner_details %}
+    <p><strong>Name:</strong> {{ trans.owner_details['first_name'] }} {{ trans.owner_details['last_name'] }}</p>
+    {% else %}
+    <p>Owner details not found</p>
+    {% endif %}
+
+    {% if trans.buyer_details %}
+    <h3>Buyer Details</h3>
+    <p><strong>Name:</strong> {{ trans.buyer_details['first_name'] }} {{ trans.buyer_details['last_name'] }}</p>
+    {% endif %}
+
+    <h3>Agent Details:</h3>
+    {% if trans.agent_details %}
+    <p><strong>Name:</strong> {{ trans.agent_details['first_name'] }} {{ trans.agent_details['last_name'] }}</p>
+    {% else %}
+    <p>Agent details not found</p>
+    {% endif %}
+
+    <h3>Company Details:</h3>
+    {% if trans.company_details %}
+    <p><strong>Name:</strong> {{ trans.company_details['name'] }}</p>
+    {% else %}
+    <p>Company details not found</p>
+    {% endif %}
+</div>
 {% else %}
 <p>No transactions found.</p>
 {% endfor %}
