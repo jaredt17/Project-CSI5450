@@ -28,6 +28,11 @@
         <p>Owner details not found</p>
         {% endif %}
 
+        {% if trans.buyer_details %}
+        <h3> Buyer Details</h3>
+        <p><strong>Name:</strong> {{ trans.buyer_details['first_name'] }} {{ trans.buyer_details['last_name'] }}</p>
+        {% endif %}
+
         <h3>Agent Details:</h3>
         <!-- Check if agent details exist -->
         {% if trans.agent_details %}

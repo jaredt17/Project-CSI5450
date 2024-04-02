@@ -218,6 +218,8 @@ def transactions():
         agent = agents_collection.find_one({"_id": trans['agent']})
         company = companies_collection.find_one({"_id": trans['company']})
         owner = owners_collection.find_one({"_id": trans['seller']})
+        buyer = owners_collection.find_one({"_id": trans['buyer']})
+        
         # Check if the home document was found
         if home:
             # Extract the location subdocument
@@ -230,6 +232,7 @@ def transactions():
             transaction_data = {
                 "date": trans["date"],
                 "price": trans["price"],
+                "buyer_details":  buyer,
                 "home_details": home,
                 "owner_details": owner,
                 "agent_details": agent if agent else "Agent details not found",
