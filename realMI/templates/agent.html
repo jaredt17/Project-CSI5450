@@ -43,7 +43,9 @@
             <td>{{ agent.last_name }}</td>
             <td>
             {% for comp in agent.companies %}
-            {{ comp.name }}<br>
+                Name: {{ comp.name }}<br>
+                Commission: {{ comp.commission }}%<br>
+                Location: {{ comp.location.city }}, {{ comp.location.state }}<br><br>
             {% endfor %}
             </td>
         </tr>
