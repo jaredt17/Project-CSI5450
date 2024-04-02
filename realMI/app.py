@@ -217,7 +217,7 @@ def transactions():
         home = homes_collection.find_one({"_id": trans['home']})
         agent = agents_collection.find_one({"_id": trans['agent']})
         company = companies_collection.find_one({"_id": trans['company']})
-        owner = owners_collection.find_one({"_id": trans['owner']})
+        owner = owners_collection.find_one({"_id": trans['seller']})
         # Check if the home document was found
         if home:
             # Extract the location subdocument
