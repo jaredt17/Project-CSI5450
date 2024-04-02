@@ -176,35 +176,6 @@ def add_owner():
     except Exception as e:
         flash(f'An error occurred: {e}', 'error')
     return redirect(url_for('add_owner_form'))
-
-
-@app.route('/add_agent', methods=['GET', 'POST'])
-def add_agent():
-    companies = list(companies_collection.find())
-    insert = True
-    if request.method == 'POST':
-        try:
-            first_name = request.form.get('first_name')
-            last_name = request.form.get('last_name')
-
-            companies_ids = request.form.getlist('companies')
-            selected_companies = list(companies_collection.find({"_id": {"$in": [ObjectId(id) for id in companies_ids]}}))
-
-            agent_data = {
-                db.AGENT.first_name: first_name,
-                db.AGENT.last_name: last_name,
-                db.AGENT.companies: selected_companies
-            }
-
-            if insert == True:
-                agents_collection.insert_one(agent_data)
-                flash('Agent added successfully!', 'success')
-            else:
-                flash('Agent not inserted...', 'fail')
-        except Exception as e:
-            flash(f'An error occurred: {e}', 'error')  # Flash an error message
-        return redirect(url_for('add_agent'))
-    return render_template('add_agent.html', companies=companies)
    
 @app.route('/transactions')
 def transactions():
@@ -246,3 +217,35 @@ def transactions():
             transactions_details.append({"date": trans["date"], "price": trans["price"], "home_details": "Home not found"})
     
     return render_template('transactions.html', transactions=transactions_details)
+
+
+@app.route('/agent')
+def agent():
+
+    companies = list(companies_collection.find())
+
+    insert = True
+    if request.method == 'POST':
+        try:
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
+
+            companies_ids = request.form.getlist('companies')
+            selected_companies = list(companies_collection.find({"_id": {"$in": [ObjectId(id) for id in companies_ids]}}))
+
+            agent_data = {
+                db.AGENT.first_name: first_name,
+                db.AGENT.last_name: last_name,
+                db.AGENT.companies: selected_companies
+            }
+
+            if insert == True:
+                agents_collection.insert_one(agent_data)
+                flash('Agent added successfully!', 'success')
+            else:
+                flash('Agent not inserted...', 'fail')
+        except Exception as e:
+            flash(f'An error occurred: {e}', 'error')  # Flash an error message
+        return redirect(url_for('agent'))
+    
+    return render_template('agent.html', companies=companies, agents=list(agents_collection.find()))
