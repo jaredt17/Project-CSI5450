@@ -142,7 +142,6 @@ def add_home():
                 db.HOME.home_type: home_type_user_input,
                 db.HOME.appliances: selected_appliances,
                 db.HOME.owner: owner_document,
-                db.HOME.for_sale: for_sale,
                 db.HOME.location: location_document
             }
             
