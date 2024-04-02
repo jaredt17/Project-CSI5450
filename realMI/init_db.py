@@ -115,7 +115,8 @@ def init_db(path: str = 'mock_data.json'):
     # Randomly generate transactions
     for _ in range(10):  # Number of transactions to create
         home = random.choice(homes)
-        owner = random.choice(owners)
+        seller = random.choice(owners)
+        buyer = random.choice(owners)
         agent = random.choice(agents)
         company = random.choice(companies)
 
@@ -128,12 +129,13 @@ def init_db(path: str = 'mock_data.json'):
         transaction_price = round(random.uniform(100000, 300000), 2)
         
         transaction = {
-            'home': home['_id'],
-            'owner': owner['_id'],
-            'agent': agent['_id'],
-            'company': company['_id'],
-            'date': transaction_date,
-            'price': transaction_price
+            db.TRANSACTION.seller: seller['_id'],
+            db.TRANSACTION.buyer: buyer['_id'],
+            db.TRANSACTION.home: home['_id'],
+            db.TRANSACTION.agent: agent['_id'],
+            db.TRANSACTION.company: company['_id'],
+            db.TRANSACTION.date: transaction_date,
+            db.TRANSACTION.price: transaction_price
         }
         
         transactions_collection.insert_one(transaction)
