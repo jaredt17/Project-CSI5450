@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Appliances{% endblock %}
+
+{% block content %}
+    <h1>Add a New Appliance</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+ 
+
+    <form action="/appliances" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+        <label for="model">Model:</label>
+        <input type="text" id="model" name="model"><br>
+        <label for="year">Year:</label>
+        <input type="text" id="year" name="year"><br>
+        <label for="make">Make:</label>
+        <input type="text" id="make" name="make"><br>
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price"><br>
+
+        <input type="submit" value="Add Appliance">
+    </form>
+
+    <h1>List of Appliances</h1>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>Make</th>
+            <th>Price</th>
+        </tr>
+        {% for app in appliances %}
+        <tr>
+            <td>{{ app.name }}</td>
+            <td>{{ app.model }}</td>
+            <td>{{ app.year }}</td>
+            <td>{{ app.make }}</td>
+            <td>{{ app.price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

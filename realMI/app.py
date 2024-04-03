@@ -322,3 +322,21 @@ def locations():
     locations = list(locations_collection.find())
     
     return render_template('locations.html', locations=locations)
+
+
+@app.route('/appliances', methods=['GET', 'POST'])
+def appliances():
+
+    if request.method == 'POST':
+        try:
+            new_appliance = {v: request.form.get(v) for v in filter(lambda l: "__" not in l , dir(db.APPLIANCE))}
+            appliances_collection.insert_one(new_appliance)
+
+            flash('Company added successfully!', 'success')
+        except Exception as e:
+            flash(f'An error occurred: {e}', 'error')  # Flash an error message
+        return redirect(url_for('appliances'))
+    
+    appliances = list(appliances_collection.find())
+    
+    return render_template('appliances.html', appliances=appliances)
