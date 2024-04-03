@@ -314,3 +314,11 @@ def companies():
     companies = list(companies_collection.find())
     
     return render_template('companies.html', companies=companies)
+
+
+@app.route('/locations', methods=['GET'])
+def locations():
+    
+    locations = list(locations_collection.find())
+    
+    return render_template('locations.html', locations=locations)

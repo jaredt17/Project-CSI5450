@@ -12,26 +12,28 @@
         {% endfor %}
     {% endif %}
     {% endwith %}
- 
 
     <h1>List of Locations</h1>
 
     <table>
         <tr>
-            <th>Name</th>
-            <th>Commission</th>
-            <th>Location</th>
+            <th>Street</th>
+            <th>Unit</th>
+            <th>City</th>
+            <th>Zip</th>
+            <th>State</th>
+            <th>County</th>
+            <th>Country</th>
         </tr>
-        {% for comp in companies %}
+        {% for loc in locations %}
         <tr>
-            <td>{{ comp.name }}</td>
-            <td>{{ comp.commission }}%</td>
-            <td>{{ comp.location.street_number }} {{ comp.location.street }} 
-                {% if comp.location.unit_number %}
-                    #{{ comp.location.unit_number }}
-                {% endif %}
-                <br>
-                {{ comp.location.city }}, {{ comp.location.state }} {{comp.location.zip}}</td>
+            <td>{{ loc.street_number }} {{loc.street}}</td>
+            <td>{{ loc.unit_number }}</td>
+            <td>{{ loc.city }}</td>
+            <td>{{ loc.zip }}</td>
+            <td>{{ loc.state }}</td>
+            <td>{{ loc.county }}</td>
+            <td>{{ loc.country }}</td>
         </tr>
         {% endfor %}
     </table>
