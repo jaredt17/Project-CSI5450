@@ -297,7 +297,6 @@ def companies():
             commission = request.form.get('commission')
 
             new_location = {v: request.form.get(v) for v in filter(lambda l: "__" not in l , dir(db.LOCATION))}
-            print(new_location)
             location = locations_collection.insert_one(new_location)
 
             company_data = {

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Locations{% endblock %}
+
+{% block content %}
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+ 
+
+    <h1>List of Locations</h1>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Commission</th>
+            <th>Location</th>
+        </tr>
+        {% for comp in companies %}
+        <tr>
+            <td>{{ comp.name }}</td>
+            <td>{{ comp.commission }}%</td>
+            <td>{{ comp.location.street_number }} {{ comp.location.street }} 
+                {% if comp.location.unit_number %}
+                    #{{ comp.location.unit_number }}
+                {% endif %}
+                <br>
+                {{ comp.location.city }}, {{ comp.location.state }} {{comp.location.zip}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
