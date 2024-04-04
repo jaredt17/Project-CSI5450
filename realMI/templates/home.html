@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Homes{% endblock %}
+
+{% block content %}
+<h1>Add a New Home</h1>
+
+<!-- Display Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+
+<form action="/home" method="post">
+    <table>
+        <tr>
+            <th>
+                Home Description
+            </th>
+            <th>
+                Home Location
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <label for="floor_space">Floor Space:</label>
+                <input type="number" id="floor_space" name="floor_space"><br>
+                <label for="floors">Floors:</label>
+                <input type="number" id="floors" name="floors"><br>
+                <label for="bed_rooms">Bedrooms:</label>
+                <input type="number" id="bed_rooms" name="bed_rooms"><br>
+                <label for="bath_rooms">Bathrooms:</label>
+                <input type="number" id="bath_rooms" name="bath_rooms" step="0.5"><br>
+                <label for="land_size">Land Size:</label>
+                <input type="number" id="land_size" name="land_size" step="0.1"><br>
+                <label for="year_constructed">Year Constructed:</label>
+                <input type="number" id="year_constructed" name="year_constructed"><br>
+                <label for="appliances">Appliances:</label><br>
+                {% for appliance in appliances %}
+                <input type="checkbox" id="appliance_{{appliance['_id']}}" name="appliances"
+                    value="{{appliance['_id']}}">
+                <label for="appliance_{{appliance['_id']}}">{{ appliance['name'] }} ({{ appliance['make'] }} - {{
+                    appliance['model'] }})</label><br>
+                {% endfor %}
+                <label for="home_type">Home Type:</label>
+                <select id="home_type" name="home_type">
+                    <option value="house">House</option>
+                    <option value="mansion">Mansion</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="townhome">Townhome</option>
+                    <option value="condo">Condo</option>
+                </select><br>
+
+                <label for="owner">Owner:</label>
+                <select name="owner" id="owner" required>
+                    <option value="">Select Owner</option>
+                    {% for owner in owners %}
+                    <option value="{{ owner['_id'] }}">{{ owner['first_name'] }} {{ owner['last_name'] }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <!-- LOCATION ADDING -------------------  -->
+                <label for="street_number">Street Number:</label>
+                <input type="text" id="street_number" name="street_number" required><br>
+
+                <label for="unit_number">Unit Number:</label>
+                <input type="text" id="unit_number" name="unit_number"><br> <!-- This can be optional -->
+
+                <label for="street">Street:</label>
+                <input type="text" id="street" name="street" required><br>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required><br>
+
+                <label for="zip">ZIP Code:</label>
+                <input type="text" id="zip" name="zip" required><br>
+
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required><br>
+
+                <label for="county">County:</label>
+                <input type="text" id="county" name="county" required><br>
+
+                <label for="country">Country:</label>
+                <input type="text" id="country" name="country" required><br>
+
+                <!-- LOCATION ADDING DONE -------------------  -->
+            </td>
+        </tr>
+    </table>
+
+    <input type="submit" value="Add Home">
+</form>
+
+<h1>List of Homes</h1>
+
+<table>
+    <tr>
+        <th>Location</th>
+        <th>Home Description</th>
+        <th>Appliances</th>
+        <th>Owner</th>
+    </tr>
+    {% for home in homes %}
+    <tr>
+        <td>{{ home.location.street_number }} {{ home.location.street }} <br> {{ home.location.city }} {{
+            home.location.state }}</td>
+        <td>
+            Floor space: {{ home.floor_space }}<br>
+            Floors: {{ home.floors }}<br>
+            Bedrooms: {{ home.bed_rooms }}<br>
+            Bathrooms: {{ home.bath_rooms }}<br>
+            Type: {{ home.home_type.capitalize() }}<br>
+            Year Constructed: {{ home.year_constructed }}
+        </td>
+        <td>
+            {% for app in home.appliances %}
+            {{ app.name }} Model:{{ app.model }} Year:{{ app.year }} Make:{{ app.make }} Price:{{ app.price }}<br>
+            {% endfor %}
+        </td>
+        <td>{{ home.owner.first_name }} {{ home.owner.last_name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

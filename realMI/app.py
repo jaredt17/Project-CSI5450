@@ -344,3 +344,43 @@ def appliances():
     appliances = list(appliances_collection.find())
     
     return render_template('appliances.html', appliances=appliances)
+
+
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+
+    if request.method == 'POST':
+        try:
+            
+            owner = ObjectId(request.form.get(db.HOME.owner))
+            appliance = request.form.getlist('appliances')
+            selected_appliances = list(appliances_collection.find({"_id": {"$in": [ObjectId(id) for id in appliance]}}))
+
+            new_location = {v: request.form.get(v) for v in filter(lambda l: "__" not in l , dir(db.LOCATION))}
+            location = locations_collection.insert_one(new_location)
+
+            new_home = {
+                db.HOME.floor_space: request.form.get(db.HOME.floor_space),
+                db.HOME.floors: request.form.get(db.HOME.floors),
+                db.HOME.bed_rooms: request.form.get(db.HOME.bed_rooms),
+                db.HOME.bath_rooms: request.form.get(db.HOME.bath_rooms),
+                db.HOME.land_size: request.form.get(db.HOME.land_size),
+                db.HOME.year_constructed: request.form.get(db.HOME.year_constructed),
+                db.HOME.home_type: request.form.get(db.HOME.home_type),
+                db.HOME.appliances: selected_appliances,
+                db.HOME.owner: owners_collection.find_one({"_id": owner}),
+                db.HOME.location: locations_collection.find_one({"_id": location.inserted_id})
+            }
+            print(new_home)
+            homes_collection.insert_one(new_home)
+
+            flash('Home added successfully!', 'success')
+        except Exception as e:
+            flash(f'An error occurred: {e}', 'error')  # Flash an error message
+        return redirect(url_for('home'))
+    
+    homes = list(homes_collection.find())
+    appliances = list(appliances_collection.find())
+    owners = list(owners_collection.find())
+
+    return render_template('home.html', appliances=appliances, homes=homes, owners=owners )
