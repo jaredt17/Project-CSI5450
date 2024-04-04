@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Real Estate App{% endblock %}
+{% block title %}Owners{% endblock %}
 
 {% block content %}
     <h1>Add a New Owner</h1>
@@ -14,7 +14,7 @@
     {% endif %}
     {% endwith %}
 
-    <form action="{{ url_for('add_owner') }}" method="post">
+    <form action="{{ url_for('owners') }}" method="post">
         <label for="first_name">First Name:</label>
         <input type="text" id="first_name" name="first_name" required><br>
 
@@ -38,4 +38,29 @@
 
         <input type="submit" value="Add Owner">
     </form>
+
+    <h1>List of Appliances</h1>
+
+    <table>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>SSN</th>
+            <th>Dependents Count</th>
+            <th>Income</th>
+            <th>Age</th>
+            <th>Profession</th>
+        </tr>
+        {% for owner in owners %}
+        <tr>
+            <td>{{ owner.first_name }}</td>
+            <td>{{ owner.last_name }}</td>
+            <td>{{ owner.ssn }}</td>
+            <td>{{ owner.no_dependents }}</td>
+            <td>{{ owner.income }}</td>
+            <td>{{ owner.age }}</td>
+            <td>{{ owner.profession }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

@@ -189,28 +189,32 @@ def add_home():
         return redirect(url_for('add_home'))
     return render_template('add_home.html', appliances = appliances, owners = owners)
 
-@app.route('/add_owner', methods=['GET'])
-def add_owner_form():
-    return render_template('add_owner.html')
 
-@app.route('/add_owner', methods=['POST'])
-def add_owner():
-    try:
-        owner_data = {
-            "first_name": request.form['first_name'],
-            "last_name": request.form['last_name'],
-            "ssn": request.form['ssn'],
-            "no_dependents": int(request.form['no_dependents']),
-            "income": float(request.form['income']),
-            "age": int(request.form['age']),
-            "profession": request.form['profession'],
-        }
-        owners_collection.insert_one(owner_data)
-        flash('Owner added successfully!', 'success')
-    except Exception as e:
-        flash(f'An error occurred: {e}', 'error')
-    return redirect(url_for('add_owner_form'))
-   
+@app.route('/owners', methods=['POST', 'GET'])
+def owners():
+        
+    if request.method == "POST":
+        try:
+            owner_data = {
+                "first_name": request.form['first_name'],
+                "last_name": request.form['last_name'],
+                "ssn": request.form['ssn'],
+                "no_dependents": int(request.form['no_dependents']),
+                "income": float(request.form['income']),
+                "age": int(request.form['age']),
+                "profession": request.form['profession'],
+            }
+            owners_collection.insert_one(owner_data)
+            flash('Owner added successfully!', 'success')
+        except Exception as e:
+            flash(f'An error occurred: {e}', 'error')
+        return redirect(url_for('owners'))
+
+    owners = list(owners_collection.find())
+
+    return render_template('owners.html', owners=owners)
+
+
 @app.route('/transactions')
 def transactions():
     owner_id = request.args.get('owner_id')
@@ -256,8 +260,8 @@ def transactions():
     return render_template('transactions.html', transactions=transactions_details, owners=owners, for_sale=for_sale)
 
 
-@app.route('/agent', methods=['GET', 'POST'])
-def agent():
+@app.route('/agents', methods=['GET', 'POST'])
+def agents():
 
     companies = list(companies_collection.find())
 
@@ -283,9 +287,9 @@ def agent():
                 flash('Agent not inserted...', 'fail')
         except Exception as e:
             flash(f'An error occurred: {e}', 'error')  # Flash an error message
-        return redirect(url_for('agent'))
+        return redirect(url_for('agents'))
     
-    return render_template('agent.html', companies=companies, agents=list(agents_collection.find()))
+    return render_template('agents.html', companies=companies, agents=list(agents_collection.find()))
 
 
 @app.route('/companies', methods=['GET', 'POST'])
