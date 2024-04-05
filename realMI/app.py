@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
 from bson import ObjectId
 import db
+import queries as q
 
 from bson import ObjectId
 
@@ -189,7 +190,7 @@ def add_home():
         return redirect(url_for('add_home'))
     return render_template('add_home.html', appliances = appliances, owners = owners)
 
-
+# OWNERS PAGE
 @app.route('/owners', methods=['POST', 'GET'])
 def owners():
         
@@ -213,7 +214,6 @@ def owners():
     owners = list(owners_collection.find())
 
     return render_template('owners.html', owners=owners)
-
 
 @app.route('/transactions')
 def transactions():
@@ -259,14 +259,34 @@ def transactions():
     owners = list(owners_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1}))
     return render_template('transactions.html', transactions=transactions_details, owners=owners, for_sale=for_sale)
 
+# pre defined Queries
+@app.route('/queries')
+def queries():
+    agents = list(agents_collection.find())
+    
+    # Commissions for each agent
+    commissions = []
+    for agent in agents:
+        commission_data = q.total_commission_by_agent(str(agent['_id']))
+        # Assume each result contains 'agent_name' and 'total_commission'
+        for data in commission_data:
+            commissions.append({
+                'agent_name': f"{agent['first_name']} {agent['last_name']}",
+                'total_commission': data.get('total_commission', 0)
+            })
+    
+    
+    return render_template('queries.html', commissions=commissions)
 
 @app.route('/agents', methods=['GET', 'POST'])
 def agents():
 
     companies = list(companies_collection.find())
+    agents_list = list(agents_collection.find())
 
     insert = True
     if request.method == 'POST':
+        # get the agent ID
         try:
             first_name = request.form.get('first_name')
             last_name = request.form.get('last_name')
@@ -289,7 +309,7 @@ def agents():
             flash(f'An error occurred: {e}', 'error')  # Flash an error message
         return redirect(url_for('agents'))
     
-    return render_template('agents.html', companies=companies, agents=list(agents_collection.find()))
+    return render_template('agents.html', companies=companies, agents=agents_list)
 
 
 @app.route('/companies', methods=['GET', 'POST'])

@@ -7,7 +7,7 @@ from bson import ObjectId
 # Queries
 
 client = MongoClient()
-client.drop_database(db.DB)
+# client.drop_database(db.DB)
 database = client['realmi']
 
 # Define collections
@@ -57,67 +57,74 @@ def find_all_homes_owner_used_to_own():
 
     return used
 
-
-def total_commission_by_agent(agent_id):
-    """Find the total commissions earned by an agent. Assume that commission earned is on the purchased price of a home he/she sells. """
+def total_commission_by_agent(agent_id_str):
+    # convert str to objectID
+    agent_id = ObjectId(agent_id_str)
+    # print(agent_id)
+    """Find the total commissions earned by an agent. Assume that commission earned is on the purchased price of a home he/she sells."""
     pipeline = [
-    # Match to filter transactions by the specific agent's _id
-    {
-        db.match: {
-            "agent": agent_id  # Assuming this is how you reference the agent in transactions
-        }
-    },
-    # Lookup to join with the COMPANY collection to get the commission percentage
-    # This assumes that the transaction includes the specific company _id for the transaction
-    {
-        db.lookup: {
-            "from": "COMPANY",
-            "localField": "company",  # Field in TRANSACTION that references the company _id
-            "foreignField": "_id",  # Matching against the _id in COMPANY
-            "as": "company_details"
-        }
-    },
-    {db.unwind: "$company_details"},
-    # Calculate the commission amount for each transaction
-    {
-        "$addFields": {
-            "calculated_commission": {
-                db.multiply: ["$price", {db.divide: ["$company_details.commission", 100]}]
+        {
+            '$match': {
+                'agent': agent_id
+            }
+        }, {
+            '$lookup': {
+                'from': 'COMPANIES', 
+                'localField': 'company', 
+                'foreignField': '_id', 
+                'as': 'company_details'
+            }
+        }, {
+            '$unwind': {
+                'path': '$company_details'
+            }
+        }, {
+            '$addFields': {
+                'calculated_commission': {
+                    '$multiply': [
+                        '$price', {
+                            '$divide': [
+                                '$company_details.commission', 100
+                            ]
+                        }
+                    ]
+                }
+            }
+        }, {
+            '$group': {
+                '_id': '$agent', 
+                'total_commission': {
+                    '$sum': '$calculated_commission'
+                }
+            }
+        }, {
+            '$lookup': {
+                'from': 'AGENTS', 
+                'localField': '_id', 
+                'foreignField': '_id', 
+                'as': 'agent_details'
+            }
+        }, {
+            '$unwind': {
+                'path': '$agent_details'
+            }
+        }, {
+            '$project': {
+                '_id': 0, 
+                'agent_name': {
+                    '$concat': [
+                        '$agent_details.first_name', ' ', '$agent_details.last_name'
+                    ]
+                }, 
+                'total_commission': 1
             }
         }
-    },
-    # Group by agent to sum the total commission
-    {
-        db.group: {
-            "_id": "$agent",  # Group by the agent's _id
-            "total_commission": {db.sum: "$calculated_commission"}
-        }
-    },
-    # Optionally, join again with the AGENT collection to enrich the agent's identity information
-    {
-        db.lookup: {
-            "from": "AGENT",
-            "localField": "_id",
-            "foreignField": "_id",
-            "as": "agent_details"
-        }
-    },
-    {db.unwind: "$agent_details"},
-    # Format the output to display the agent's name and their total commission
-    {
-        db.project: {
-            "_id": 0,
-            "agent_name": {
-                db.concat: ["$agent_details.first_name", " ", "$agent_details.last_name"]
-            },
-            "total_commission": 1
-        }
-    }]
+    ]
 
     # Execute aggregation pipeline
     result = transactions_collection.aggregate(pipeline)
 
-    return result
+    return list(result)  # Convert cursor to list to consume its contents
 
 def find_owners_who_own_apartments_and_mansions():
     """Find people who own apartments as well as mansions. """
@@ -309,3 +316,15 @@ def find_home_for_sale(**params):
     result = transactions_collection.aggregate(pipeline)
 
     return pipeline
+
+# TESTING
+# Fetch all agents and calculate their total commissions
+for agent in agents_collection.find():
+    agent_id_str = str(agent['_id'])
+    total_commission_result = total_commission_by_agent(agent_id_str)
+    if total_commission_result:
+        print(f"Total commission for agent {agent['first_name']} {agent['last_name']}: {total_commission_result[0]['total_commission']}")
+    else:
+        print(f"Total commission for agent {agent['first_name']} {agent['last_name']}: 0")
+
+# If the result is not empty, print the total commission

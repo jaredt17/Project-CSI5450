@@ -1,0 +1,24 @@
+<!-- queries.html -->
+{% extends 'base.html' %}
+
+{% block title %}Queries{% endblock %}
+
+{% block content %}
+    <h1>Agent Commissions</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Agent Name</th>
+                <th>Total Commission</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for commission in commissions %}
+            <tr>
+                <td>{{ commission.agent_name }}</td>
+                <td>{{ commission.total_commission | round(2) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
