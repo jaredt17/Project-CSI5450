@@ -38,21 +38,21 @@ Typical information kept in the database includes:
 
 Design the J2EE system keeping in mind that users of this system may ask some of the following questions for a variety of reasons.
 
-1)	List all the homes owned by a given owner in a given city.  -                   DONE
-2)	List all the homes that were sold more than once. -                             DONE
-3)	Find the most expensive home an owner ever bought. -                            DONE
-4)	Find all the homes that include all e appliances by the same maker. -           TO DO
-5)	Find owners who do not own the homes they used to own. -                        TO DO
-6)	Find the total commissions earned by an agent. Assume that commission earned is on the purchased price of a home he/she sells. -        TO DO
-7)	Find people who own apartments as well as mansions. -                           DONE
+1)	List all the homes owned by a given owner in a given city.  -                   TODO - needs input
+2)	List all the homes that were sold more than once. -                             TODO - no input - CARLO
+3)	Find the most expensive home an owner ever bought. -                            TODO - needs input
+4)	Find all the homes that include all e appliances by the same maker. -           TO DO - needs input
+5)	Find owners who do not own the homes they used to own. -                        TO DO - no input - CARLO
+6)	Find the total commissions earned by an agent.                                  DONE - IN WEBSITE
+7)	Find people who own apartments as well as mansions. -                           DONE - IN WEBSITE
 8)	List all the homes below a price in a given city. -                             TO DO
 9)	List owners who own all the most expensive homes in a given city -              TO DO
-10)	Find homes that up for sale in a given city that meet certain buyer choices such as number of bedrooms, baths, etc - TO DO - ADD LISTINGS PAGE??
+10)	Find homes that up for sale in a given city that meet certain buyer choices such as number of bedrooms, baths, etc - TO DO - HARDEST ONE
 
 You also need to consider some of the following operations:
 1)	Adding an agent into the database - DONE
 2)	Adding a new home to the database - DONE
-3)	Moving a home from available for sale list to the owned list - TO DO??
+3)	Moving a home from available for sale list to the owned list - 
 4)	Making a person a home owner and consistently changing all related information. - TO DO
     - Need to add modify existing home for this
 

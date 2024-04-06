@@ -25,38 +25,57 @@ def list_homes_by_owner_and_city(owner, city):
     pass
 
 def list_homes_sold_multiple_times():
-    """List all the homes that were sold more than once.""" 
-    duplicates = transactions_collection.aggregate({
-        db.group: {
-            "_id": "$home",
-            "count": {db.sum: 1}
-        },
-        db.match: {
-            "count": {db.greater_than: 1}
+    pipeline = [
+        {
+            '$group': {
+                '_id': '$home', 
+                'count': {
+                    '$sum': 1
+                }
+            }
+        }, {
+            '$match': {
+                'count': {
+                    '$gt': 1
+                }
+            }
+        }, {
+            '$lookup': {
+                'from': 'HOMES', 
+                'localField': '_id', 
+                'foreignField': '_id', 
+                'as': 'home_details'
+            }
+        }, {
+            '$unwind': '$home_details'
+        }, {
+            '$project': {
+                '_id': 0, 
+                'address': '$home_details.location', 
+                'times_sold': '$count'
+            }
         }
-    })
+    ]
+    duplicates = transactions_collection.aggregate(pipeline)
+    return list(duplicates)
 
-    return duplicates
-
-
+# CARLO TO DO
 def find_highest_selling_home(owner):
     """Find the most expensive home an owner ever bought."""
     pass
 
+# CARLO TO DO
 def find_homes_with_appliances_of_make(make):
     """Find all the homes that include all e appliances by the same maker."""
     pass
 
+# CARLO TO DO
 def find_all_homes_owner_used_to_own():
     """Find owners who do not own the homes they used to own. """
-    used = transactions_collection.aggregate({
-        db.group: {
-            "_id": "$seller"
-        }
-    })
+    
+    pass
 
-    return used
-
+# Fully implemented and working into HTML
 def total_commission_by_agent(agent_id_str):
     # convert str to objectID
     agent_id = ObjectId(agent_id_str)
@@ -123,53 +142,46 @@ def total_commission_by_agent(agent_id_str):
 
     # Execute aggregation pipeline
     result = transactions_collection.aggregate(pipeline)
-
     return list(result)  # Convert cursor to list to consume its contents
 
 def find_owners_who_own_apartments_and_mansions():
     """Find people who own apartments as well as mansions. """
     pipeline = [
-    # Step 1: Filter homes that are either apartments or mansions
-    {
-        "$match": {
-            "home_type": {"$in": ["apartment", "mansion"]}
+        {
+            '$match': {
+                'home_type': {
+                    '$in': [
+                        'apartment', 'mansion'
+                    ]
+                }
+            }
+        }, {
+            '$group': {
+                '_id': '$owner', 
+                'home_types': {
+                    '$addToSet': '$home_type'
+                }
+            }
+        }, {
+            '$match': {
+                'home_types': {
+                    '$all': [
+                        'apartment', 'mansion'
+                    ]
+                }
+            }
+        }, {
+            '$project': {
+                '_id': 0, 
+                'first_name': '$_id.first_name', 
+                'last_name': '$_id.last_name'
+            }
         }
-    },
-    # Step 2: Group by owner, and collect the types of homes each owner has
-    {
-        "$group": {
-            "_id": "$owner",  # Assuming 'owner' references the OWNER collection
-            "home_types": {"$addToSet": "$home_type"}
-        }
-    },
-    # Step 3: Filter owners who own both apartments and mansions
-    {
-        "$match": {
-            "home_types": {"$all": ["apartment", "mansion"]}
-        }
-    },
-    # Optionally, you might want to lookup the owner information
-    {
-        "$lookup": {
-            "from": "OWNER",
-            "localField": "_id",
-            "foreignField": "_id",
-            "as": "owner_details"
-        }
-    },
-    # Projecting the result to format it nicely
-    {
-        "$project": {
-            "_id": 0,
-            "owner_id": "$_id",
-            "owner_details": 1
-        }
-    }]
+    ]
 
     # Execute aggregation pipeline
     result = homes_collection.aggregate(pipeline)
-
-    return result
+    return list(result)
 
 def list_homes_below_price_in_city(price, city):
     """List all the homes below a price in a given city."""
@@ -316,15 +328,3 @@ def find_home_for_sale(**params):
     result = transactions_collection.aggregate(pipeline)
 
     return pipeline
-
-# TESTING
-# Fetch all agents and calculate their total commissions
-for agent in agents_collection.find():
-    agent_id_str = str(agent['_id'])
-    total_commission_result = total_commission_by_agent(agent_id_str)
-    if total_commission_result:
-        print(f"Total commission for agent {agent['first_name']} {agent['last_name']}: {total_commission_result[0]['total_commission']}")
-    else:
-        print(f"Total commission for agent {agent['first_name']} {agent['last_name']}: 0")
-
-# If the result is not empty, print the total commission
