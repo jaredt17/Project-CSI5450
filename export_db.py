@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from pymongo import MongoClient
 from realMI import db
 from bson import json_util
