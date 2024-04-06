@@ -62,7 +62,37 @@ def list_homes_sold_multiple_times():
 # CARLO TO DO
 def find_highest_selling_home(owner):
     """Find the most expensive home an owner ever bought."""
-    pass
+    pipeline=[
+    {
+        '$match': {
+            'buyer': {
+                '$ne': None
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$buyer', 
+            'maxPrice': {
+                '$max': '$price'
+            }
+        }
+    }, {
+        '$lookup': {
+            'from': 'OWNERS', 
+            'localField': '_id', 
+            'foreignField': '_id', 
+            'as': 'ownerDetails'
+        }
+    }, {
+        '$unwind': '$ownerDetails'
+    }, {
+        '$project': {
+            '_id': 0, 
+            'owner': '$ownerDetails', 
+            'maxPrice': 1
+        }
+    }
+]
 
 # CARLO TO DO
 def find_homes_with_appliances_of_make(make):
