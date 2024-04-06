@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
-from bson import ObjectId
+from bson import ObjectId, json_util
 import db
 import queries as q
+import json
 
 from bson import ObjectId
 
@@ -14,7 +15,16 @@ app.secret_key = 'your_secret_key'
 
 client = MongoClient()
 client.drop_database(db.DB)
-database = client['realmi']
+database = client[db.DB]
+
+with open("db_export.json", "r") as dbw:
+    in_db = json.load(dbw)
+
+ac_db: dict = json_util.loads(in_db)
+
+for k in ac_db.keys():
+    col = database.create_collection(k)
+    col.insert_many(ac_db[k])
 
 # Define collections
 homes_collection = database['HOMES']
