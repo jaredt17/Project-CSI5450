@@ -275,8 +275,16 @@ def queries():
                 'total_commission': data.get('total_commission', 0)
             })
     
+    # Owners who have multiple home types ---------------------------
+    owner_result = q.find_owners_who_own_apartments_and_mansions()
+    # print(owner_result)
     
-    return render_template('queries.html', commissions=commissions)
+    home_sold_mult_times = q.list_homes_sold_multiple_times()
+    print(home_sold_mult_times)
+
+    # END HOME TYPES ----------------------------------------------
+    
+    return render_template('queries.html', commissions=commissions, owner_result=owner_result, home_sold_mult_times = home_sold_mult_times)
 
 @app.route('/agents', methods=['GET', 'POST'])
 def agents():
