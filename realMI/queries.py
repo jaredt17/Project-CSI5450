@@ -245,7 +245,7 @@ def list_homes_below_price_in_city(price, city):
     ]
 
     result = homes_collection.aggregate(pipeline)
-    return result
+    return list(result)
 
 # Working - needs to be in website
 def list_owners_with_most_expensive_homes_in_city(city):
@@ -291,7 +291,7 @@ def list_owners_with_most_expensive_homes_in_city(city):
 
     # Execute aggregation pipeline
     result = homes_collection.aggregate(pipeline)
-    return result
+    return list(result)
 
 # Homes for sale already done on Transactions Page
 def find_home_for_sale(**params):
