@@ -39,7 +39,7 @@
     <p><strong>Price:</strong> ${{ trans.price }}</p>
     <h3>Home Details:</h3>
     {% if trans.home_details != "Home not found" %}
-    <p><strong>Address:</strong> {{ trans.home_details['location']['street'] }}, 
+    <p><strong>Address:</strong> {{trans.home_details['location']['street_number']}} {{ trans.home_details['location']['street'] }}, 
        {{ trans.home_details['location']['city'] }}</p>
     <p><strong>Floor Space:</strong> {{ trans.home_details['floor_space'] }} sqft</p>
     <p><strong>Bedrooms:</strong> {{ trans.home_details['bed_rooms'] }}</p>

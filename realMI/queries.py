@@ -1,8 +1,5 @@
 from pymongo import MongoClient
 from bson import ObjectId
-import db
-
-from bson import ObjectId
 
 # Queries
 
@@ -19,23 +16,18 @@ owners_collection = database["OWNERS"]
 transactions_collection = database["TRANSACTIONS"]
 companies_collection = database["COMPANIES"]
 
+
 # Works in Mongo - need to add to website
 def list_homes_by_owner_and_city(owner_id, city):
     """List all the homes owned by a given owner in a given city."""
     # Convert owner_id to ObjectId if it's passed as a string
     if isinstance(owner_id, str):
         owner_id = ObjectId(owner_id)
-    
-    pipeline = [
-        {
-            '$match': {
-                'owner': owner_id,
-                'location.city': city
-            }
-        }
-    ]
-    
+
+    pipeline = [{"$match": {"owner": owner_id, "location.city": city}}]
+
     return list(homes_collection.aggregate(pipeline))
+
 
 # Needs testing and to be added
 def list_homes_sold_multiple_times():
@@ -86,7 +78,25 @@ def find_highest_selling_home(owner):
 # TO DO
 def find_homes_with_appliances_of_make(make):
     """Find all the homes that include all e appliances by the same maker."""
-    pass
+    pipeline = [
+        {"$match": {"appliances.make": make}},
+        {
+            "$addFields": {
+                "allAppliancesMatch": {
+                    "$allElementsTrue": {
+                        "$map": {
+                            "input": "$appliances",
+                            "as": "appliance",
+                            "in": {"$eq": ["$$appliance.make", make]},
+                        }
+                    }
+                }
+            }
+        },
+        {"$match": {"allAppliancesMatch": True}},
+    ]
+
+    return list(homes_collection.aggregate(pipeline))
 
 
 # WORKING - to add to website
@@ -196,6 +206,7 @@ def find_owners_who_own_apartments_and_mansions():
     # Execute aggregation pipeline
     result = homes_collection.aggregate(pipeline)
     return list(result)
+
 
 # Needs testing and needs implement in website
 def list_homes_below_price_in_city(price, city):
@@ -322,5 +333,5 @@ def find_home_for_sale(**params):
             }
         },
     ]
-    result = transactions_collection.aggregate(pipeline)
-    return pipeline
+
+    return list(transactions_collection.aggregate(pipeline))
