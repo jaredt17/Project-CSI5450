@@ -75,7 +75,7 @@ def find_highest_selling_home(owner):
     return list(transactions_collection.aggregate(pipeline))
 
 
-# TO DO
+# WORKING - to add to website
 def find_homes_with_appliances_of_make(make):
     """Find all the homes that include all e appliances by the same maker."""
     pipeline = [
