@@ -236,14 +236,14 @@ def list_homes_below_price_in_city(price, city):
     result = homes_collection.aggregate(pipeline)
     return result
 
-# Needs testing and to be added to website
+# Working - needs to be in website
 def list_owners_with_most_expensive_homes_in_city(city):
     """List owners who own all the most expensive homes in a given city"""
     pipeline = [
         # Step 1: Join HOME collection with TRANSACTION to get home prices
         {
             "$lookup": {
-                "from": "TRANSACTION",
+                "from": "TRANSACTIONS",
                 "localField": "_id",  # Assuming home _id is what TRANSACTION references
                 "foreignField": "home",  # Assuming 'home' in TRANSACTION refers to HOME _id
                 "as": "transactions",
@@ -282,7 +282,7 @@ def list_owners_with_most_expensive_homes_in_city(city):
     result = homes_collection.aggregate(pipeline)
     return result
 
-# Homes for sale already done on Homes Page
+# Homes for sale already done on Transactions Page
 def find_home_for_sale(**params):
     """Find homes that up for sale in a given city that meet certain buyer choices such as number of bedrooms, baths, etc"""
 
