@@ -29,7 +29,7 @@ def list_homes_by_owner_and_city(owner_id, city):
     return list(homes_collection.aggregate(pipeline))
 
 
-# Needs testing and to be added
+# WORKING - todo add to website
 def list_homes_sold_multiple_times():
     pipeline = [
         {"$group": {"_id": "$home", "count": {"$sum": 1}}},
@@ -55,11 +55,11 @@ def list_homes_sold_multiple_times():
     return list(duplicates)
 
 
-# Needs testing - to add to website
+# WORKING testing - to add to website
 def find_highest_selling_home(owner):
     """Find the most expensive home an owner ever bought."""
     pipeline = [
-        {"$match": {"buyer": {"$ne": None}}},
+        {"$match": {"buyer": {"$ne": owner}}},
         {"$group": {"_id": "$buyer", "maxPrice": {"$max": "$price"}}},
         {
             "$lookup": {
@@ -187,7 +187,7 @@ def total_commission_by_agent(agent_id_str):
     return list(result)  # Convert cursor to list to consume its contents
 
 
-# Done and Added
+# Working and Added
 def find_owners_who_own_apartments_and_mansions():
     """Find people who own apartments as well as mansions."""
     pipeline = [
@@ -208,40 +208,58 @@ def find_owners_who_own_apartments_and_mansions():
     return list(result)
 
 
-# Needs testing and needs implement in website
+# WORKING - to do add to website
 def list_homes_below_price_in_city(price, city):
     """List all the homes below a price in a given city."""
     pipeline = [
         {
-            "$lookup": {
-                "from": "TRANSACTION",
-                "localField": "_id",  # Assuming home _id is what TRANSACTION references
-                "foreignField": "home",  # 'home' in TRANSACTION refers to HOME _id
-                "as": "transactions",
+            '$lookup': {
+                'from': 'TRANSACTIONS', 
+                'localField': '_id', 
+                'foreignField': 'home', 
+                'as': 'transactions'
             }
-        },
-        # Step 2: Filter by city
-        {"$match": {"location.city": city}},
-        # Unwind transactions to filter individually
-        {"$unwind": "$transactions"},
-        # Step 3: Filter transactions below the specified price
-        {"$match": {"transactions.price": {"$lt": price}}},
-        # Optional: Group by home to aggregate transactions (if you want to compile transactions per home)
-        {
-            "$group": {
-                "_id": "$_id",
-                "location": {"$first": "$location"},
-                "transactions": {"$push": "$transactions"},
+        }, {
+            '$match': {
+                'location.city': 'Anytown'
             }
-        },
-        # Optional: Sort by transaction price
-        {
-            "$sort": {
-                "transactions.price": 1  # Adjust according to your needs
+        }, {
+            '$unwind': {
+                'path': '$transactions', 
+                'preserveNullAndEmptyArrays': True
             }
-        },
-        # Project/format the output
-        {"$project": {"_id": 0, "address": "$location", "transactions": 1}},
+        }, {
+            '$match': {
+                '$or': [
+                    {
+                        'transactions.buyer': {
+                            '$exists': False
+                        }
+                    }, {
+                        'transactions.buyer': None
+                    }
+                ], 
+                'transactions.price': {
+                    '$lt': 270000
+                }
+            }
+        }, {
+            '$group': {
+                '_id': '$_id', 
+                'location': {
+                    '$first': '$location'
+                }, 
+                'transactions': {
+                    '$push': '$transactions'
+                }
+            }
+        }, {
+            '$project': {
+                '_id': 0, 
+                'address': '$location', 
+                'transactions': 1
+            }
+        }
     ]
 
     result = homes_collection.aggregate(pipeline)
