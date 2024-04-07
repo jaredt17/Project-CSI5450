@@ -19,10 +19,23 @@ owners_collection = database["OWNERS"]
 transactions_collection = database["TRANSACTIONS"]
 companies_collection = database["COMPANIES"]
 
-
-def list_homes_by_owner_and_city(owner, city):
+# Needs testing - TO ADD TO WEBPAGE
+def list_homes_by_owner_and_city(owner_id, city):
     """List all the homes owned by a given owner in a given city."""
-    pass
+    # Convert owner_id to ObjectId if it's passed as a string
+    if isinstance(owner_id, str):
+        owner_id = ObjectId(owner_id)
+    
+    pipeline = [
+        {
+            '$match': {
+                'owner': owner_id,
+                'location.city': city
+            }
+        }
+    ]
+    
+    return list(homes_collection.aggregate(pipeline))
 
 def list_homes_sold_multiple_times():
     pipeline = [
