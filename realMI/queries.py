@@ -78,7 +78,23 @@ def find_highest_selling_home(owner):
 # TO DO
 def find_homes_with_appliances_of_make(make):
     """Find all the homes that include all e appliances by the same maker."""
-    pipeline = [{"$match": {"appliances.make": make}}]
+    pipeline = [
+        {"$match": {"appliances.make": make}},
+        {
+            "$addFields": {
+                "allAppliancesMatch": {
+                    "$allElementsTrue": {
+                        "$map": {
+                            "input": "$appliances",
+                            "as": "appliance",
+                            "in": {"$eq": ["$$appliance.make", make]},
+                        }
+                    }
+                }
+            }
+        },
+        {"$match": {"allAppliancesMatch": True}},
+    ]
 
     return list(homes_collection.aggregate(pipeline))
 
