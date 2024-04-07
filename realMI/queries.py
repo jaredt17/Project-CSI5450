@@ -19,7 +19,7 @@ owners_collection = database["OWNERS"]
 transactions_collection = database["TRANSACTIONS"]
 companies_collection = database["COMPANIES"]
 
-# Needs testing - TO ADD TO WEBPAGE
+# Works in Mongo - need to add to website
 def list_homes_by_owner_and_city(owner_id, city):
     """List all the homes owned by a given owner in a given city."""
     # Convert owner_id to ObjectId if it's passed as a string
@@ -37,7 +37,7 @@ def list_homes_by_owner_and_city(owner_id, city):
     
     return list(homes_collection.aggregate(pipeline))
 
-
+# Needs testing and to be added
 def list_homes_sold_multiple_times():
     pipeline = [
         {"$group": {"_id": "$home", "count": {"$sum": 1}}},
@@ -63,7 +63,7 @@ def list_homes_sold_multiple_times():
     return list(duplicates)
 
 
-# CARLO TO DO
+# Needs testing - to add to website
 def find_highest_selling_home(owner):
     """Find the most expensive home an owner ever bought."""
     pipeline = [
@@ -80,15 +80,16 @@ def find_highest_selling_home(owner):
         {"$unwind": "$ownerDetails"},
         {"$project": {"_id": 0, "owner": "$ownerDetails", "maxPrice": 1}},
     ]
+    return list(transactions_collection.aggregate(pipeline))
 
 
-# CARLO TO DO
+# TO DO
 def find_homes_with_appliances_of_make(make):
     """Find all the homes that include all e appliances by the same maker."""
     pass
 
 
-# CARLO TO DO
+# WORKING - to add to website
 def find_all_homes_owner_used_to_own():
     """Find owners who do not own the homes they used to own."""
 
@@ -111,6 +112,7 @@ def find_all_homes_owner_used_to_own():
             }
         },
     ]
+    return list(transactions_collection.aggregate(pipeline))
 
 
 # Fully implemented and working into HTML
@@ -175,6 +177,7 @@ def total_commission_by_agent(agent_id_str):
     return list(result)  # Convert cursor to list to consume its contents
 
 
+# Done and Added
 def find_owners_who_own_apartments_and_mansions():
     """Find people who own apartments as well as mansions."""
     pipeline = [
@@ -194,7 +197,7 @@ def find_owners_who_own_apartments_and_mansions():
     result = homes_collection.aggregate(pipeline)
     return list(result)
 
-
+# Needs testing and needs implement in website
 def list_homes_below_price_in_city(price, city):
     """List all the homes below a price in a given city."""
     pipeline = [
@@ -231,10 +234,9 @@ def list_homes_below_price_in_city(price, city):
     ]
 
     result = homes_collection.aggregate(pipeline)
-
     return result
 
-
+# Needs testing and to be added to website
 def list_owners_with_most_expensive_homes_in_city(city):
     """List owners who own all the most expensive homes in a given city"""
     pipeline = [
@@ -278,10 +280,9 @@ def list_owners_with_most_expensive_homes_in_city(city):
 
     # Execute aggregation pipeline
     result = homes_collection.aggregate(pipeline)
-
     return result
 
-
+# Homes for sale already done on Homes Page
 def find_home_for_sale(**params):
     """Find homes that up for sale in a given city that meet certain buyer choices such as number of bedrooms, baths, etc"""
 
@@ -321,7 +322,5 @@ def find_home_for_sale(**params):
             }
         },
     ]
-
     result = transactions_collection.aggregate(pipeline)
-
     return pipeline
