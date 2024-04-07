@@ -59,18 +59,19 @@ def list_homes_sold_multiple_times():
 def find_highest_selling_home(owner):
     """Find the most expensive home an owner ever bought."""
     pipeline = [
-        {"$match": {"buyer": {"$ne": None}}},
-        {"$group": {"_id": "$buyer", "maxPrice": {"$max": "$price"}}},
+        {"$match": {"buyer": owner}},
+        {"$sort": {"price": -1}},
+        {"$limit": 1},
         {
             "$lookup": {
-                "from": "OWNERS",
-                "localField": "_id",
+                "from": "HOMES",
+                "localField": "home",
                 "foreignField": "_id",
-                "as": "ownerDetails",
+                "as": "home_details",
             }
         },
-        {"$unwind": "$ownerDetails"},
-        {"$project": {"_id": 0, "owner": "$ownerDetails", "maxPrice": 1}},
+        {"$unwind": "$home_details"},
+        {"$project": {"_id": 0, "price": 1, "home_details": 1}},
     ]
     return list(transactions_collection.aggregate(pipeline))
 
@@ -247,6 +248,7 @@ def list_homes_below_price_in_city(price, city):
     result = homes_collection.aggregate(pipeline)
     return list(result)
 
+
 # Working - needs to be in website
 def list_owners_with_most_expensive_homes_in_city(city):
     """List owners who own all the most expensive homes in a given city"""
@@ -292,6 +294,7 @@ def list_owners_with_most_expensive_homes_in_city(city):
     # Execute aggregation pipeline
     result = homes_collection.aggregate(pipeline)
     return list(result)
+
 
 # Homes for sale already done on Transactions Page
 def find_home_for_sale(**params):
