@@ -265,32 +265,6 @@ def transactions():
     owners = list(owners_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1}))
     return render_template('transactions.html', transactions=transactions_details, owners=owners, for_sale=for_sale)
 
-# pre defined Queries
-@app.route('/queries')
-def queries():
-    agents = list(agents_collection.find())
-    
-    # Commissions for each agent
-    commissions = []
-    for agent in agents:
-        commission_data = q.total_commission_by_agent(str(agent['_id']))
-        # Assume each result contains 'agent_name' and 'total_commission'
-        for data in commission_data:
-            commissions.append({
-                'agent_name': f"{agent['first_name']} {agent['last_name']}",
-                'total_commission': data.get('total_commission', 0)
-            })
-    
-    # Owners who have multiple home types ---------------------------
-    owner_result = q.find_owners_who_own_apartments_and_mansions()
-    # print(owner_result)
-    
-    home_sold_mult_times = q.list_homes_sold_multiple_times()
-    print(home_sold_mult_times)
-
-    # END HOME TYPES ----------------------------------------------
-    
-    return render_template('queries.html', commissions=commissions, owner_result=owner_result, home_sold_mult_times = home_sold_mult_times)
 
 @app.route('/agents', methods=['GET', 'POST'])
 def agents():
@@ -418,3 +392,31 @@ def home():
     owners = list(owners_collection.find())
 
     return render_template('home.html', appliances=appliances, homes=homes, owners=owners )
+
+
+# pre defined Queries
+@app.route('/queries', methods=['GET', 'POST'])
+def queries():
+    agents = list(agents_collection.find())
+    
+    # Commissions for each agent
+    commissions = []
+    for agent in agents:
+        commission_data = q.total_commission_by_agent(str(agent['_id']))
+        # Assume each result contains 'agent_name' and 'total_commission'
+        for data in commission_data:
+            commissions.append({
+                'agent_name': f"{agent['first_name']} {agent['last_name']}",
+                'total_commission': data.get('total_commission', 0)
+            })
+    
+    # Owners who have multiple home types ---------------------------
+    owner_result = q.find_owners_who_own_apartments_and_mansions()
+    # print(owner_result)
+    
+    home_sold_mult_times = q.list_homes_sold_multiple_times()
+    print(home_sold_mult_times)
+
+    # END HOME TYPES ----------------------------------------------
+    
+    return render_template('queries.html', commissions=commissions, owner_result=owner_result, home_sold_mult_times = home_sold_mult_times)
