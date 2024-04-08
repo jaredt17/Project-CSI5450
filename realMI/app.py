@@ -2,12 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
 from bson import ObjectId, json_util
 import db
-import queries as q
+from queries import Queries
 import json
-
-from bson import ObjectId
-
-from init_db import init_db
 
 
 app = Flask(__name__)
@@ -35,7 +31,7 @@ owners_collection = database["OWNERS"]
 transactions_collection = database["TRANSACTIONS"]
 companies_collection = database["COMPANIES"]
 
-init_db()
+q = Queries(database)
 
 # Starting app
 @app.route('/', methods=('GET', 'POST'))
