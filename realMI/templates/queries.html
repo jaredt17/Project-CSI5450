@@ -4,25 +4,8 @@
 {% block title %}Queries{% endblock %}
 
 {% block content %}
-<!-- <details>
-    <summary>Total Commissions for each Agent</summary>
-    <table>
-        <thead>
-            <tr>
-                <th>Agent Name</th>
-                <th>Total Commission</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for commission in commissions %}
-            <tr>
-                <td>{{ commission.agent_name }}</td>
-                <td>{{ commission.total_commission | round(2) }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</details> -->
+
+<h1>Common Queries</h1>
 
 {% for cont in content %}
 <details {{cont.open}}>

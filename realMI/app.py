@@ -625,19 +625,4 @@ def queries():
 
             c.open = setOpen()
 
-        # agents = list(agents_collection.find())
-
-        # # Commissions for each agent
-        # commissions = []
-        # for agent in agents:
-        #     commission_data = q.total_commission_by_agent(str(agent['_id']))
-        #     # Assume each result contains 'agent_name' and 'total_commission'
-        #     for data in commission_data:
-        #         commissions.append({
-        #             'agent_name': f"{agent['first_name']} {agent['last_name']}",
-        #             'total_commission': data.get('total_commission', 0)
-        #         })
-
-        # END HOME TYPES ----------------------------------------------
-
     return render_template("queries.html", content=content)
