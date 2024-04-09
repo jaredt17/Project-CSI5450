@@ -465,7 +465,8 @@ class Content:
         self.results: List[Any] = []
 
 content: List[Content] = [
-    Content("Homes that have been sold multiple times", "list_homes_sold_multiple_times", ["Address", "Count"])
+    Content("List homes that have been sold multiple times", "list_homes_sold_multiple_times", ["Address", "Count"]),
+    Content("List owners that own apartments and mansions", "find_owners_who_own_apartments_and_mansions", ["Owner"])
 ]
 
 def setOpen():
@@ -483,14 +484,28 @@ def queries():
         if "list_homes_sold_multiple_times" in request.values.keys():
 
             c = content[0]
+            c.results.clear()
 
             res = q.list_homes_sold_multiple_times()
+
             for r in res:
                 addr = r['addr']
                 unit = f"\n{addr['unit_number']}" if addr['unit_number'] else ""
                 c.results.append(
                     [f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}", r['times_sold']]
                 )
+            c.open = setOpen()
+
+        if "find_owners_who_own_apartments_and_mansions" in request.values.keys():
+
+            c = content[1]
+            c.results.clear()
+        
+            res = q.find_owners_who_own_apartments_and_mansions()
+
+            for r in res:
+                c.results.append([f"{r['first_name']} {r['last_name']}"])
+            
             c.open = setOpen()
         
         # agents = list(agents_collection.find())
@@ -509,9 +524,6 @@ def queries():
         # # Owners who have multiple home types ---------------------------
         # owner_result = q.find_owners_who_own_apartments_and_mansions()
         # # print(owner_result)
-
-        # home_sold_mult_times = q.list_homes_sold_multiple_times()
-        # print(home_sold_mult_times)
 
         # END HOME TYPES ----------------------------------------------
 
