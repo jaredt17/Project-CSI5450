@@ -512,6 +512,11 @@ content: List[Content] = [
         "list_homes_below_price_in_city",
         ["Address", "Price"],
     ),
+    Content(
+        "Find the most expensive home an owner ever bought",
+        "find_highest_selling_home",
+        ["Price", "Address"],
+    ),
 ]
 
 
@@ -525,6 +530,7 @@ def setOpen():
 @app.route("/queries", methods=["GET", "POST"])
 def queries():
     cities = locations_collection.distinct(db.LOCATION.city)
+    owners = list(owners_collection.find())
 
     # add inputs for list_homes_below_price_in_city
     content[3].forms.clear()
@@ -534,6 +540,13 @@ def queries():
     for c in cities:
         i.add_option(c, c)
     content[3].forms.append(i)
+
+    # add inputs for find_highest_selling_home
+    content[4].forms.clear()
+    o = Input(Input.SELECT, "Owner", "owner_4")
+    for ow in owners:
+        o.add_option(ow["_id"], f"{ow['first_name']} {ow["last_name"]}")
+    content[4].forms.append(o)
 
     if request.method == "POST":
         if "list_homes_sold_multiple_times" in request.values.keys():
@@ -589,6 +602,24 @@ def queries():
                     [
                         f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}",
                         r["transactions"][0]["price"],
+                    ]
+                )
+
+            c.open = setOpen()
+
+        if "find_highest_selling_home" in request.values.keys():
+            c = content[4]
+            c.results.clear()
+
+            res = q.find_highest_selling_home(ObjectId(request.values.get("owner_4")))
+
+            for r in res:
+                addr = r["home_details"]["location"]
+                unit = f"\n{addr['unit_number']}" if addr["unit_number"] else ""
+                c.results.append(
+                    [
+                        r["price"],
+                        f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}",
                     ]
                 )
 
