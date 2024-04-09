@@ -521,10 +521,6 @@ def queries():
         #             'total_commission': data.get('total_commission', 0)
         #         })
 
-        # # Owners who have multiple home types ---------------------------
-        # owner_result = q.find_owners_who_own_apartments_and_mansions()
-        # # print(owner_result)
-
         # END HOME TYPES ----------------------------------------------
 
     return render_template("queries.html", content=content)
