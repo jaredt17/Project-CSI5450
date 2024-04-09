@@ -454,8 +454,8 @@ def home():
         "home.html", appliances=appliances, homes=homes, owners=owners
     )
 
-class Input:
 
+class Input:
     SELECT = "select"
     TEXT = "text"
     NUMBER = "number"
@@ -475,7 +475,7 @@ class Input:
             ret += f'<select name="{self.id}" id="{self.id}">\n'
             for opt in self.options:
                 ret += f'<option value="{opt[0]}">{opt[1]}</option>\n'
-            ret += '</select>\n'
+            ret += "</select>\n"
         else:
             ret += f'<input type="{self.type}" id="{self.id}" name="{self.id}">\n'
         return ret
@@ -490,22 +490,40 @@ class Content:
         self.headers: List[str] = headers
         self.results: List[Any] = []
 
+
 content: List[Content] = [
-    Content("List homes that have been sold multiple times", "list_homes_sold_multiple_times",["Address", "Count"]),
-    Content("List owners that own apartments and mansions", "find_owners_who_own_apartments_and_mansions", ["Owner"]),
-    Content("List owners that sold a home at one point", "find_all_homes_owner_used_to_own", ["Owner"]),
-    Content("List all homes below a price in a given city", "list_homes_below_price_in_city", ["Address", "Price"])
+    Content(
+        "List homes that have been sold multiple times",
+        "list_homes_sold_multiple_times",
+        ["Address", "Count"],
+    ),
+    Content(
+        "List owners that own apartments and mansions",
+        "find_owners_who_own_apartments_and_mansions",
+        ["Owner"],
+    ),
+    Content(
+        "List owners that sold a home at one point",
+        "find_all_homes_owner_used_to_own",
+        ["Owner"],
+    ),
+    Content(
+        "List all homes below a price in a given city",
+        "list_homes_below_price_in_city",
+        ["Address", "Price"],
+    ),
 ]
+
 
 def setOpen():
     for c in content:
         c.open = ""
     return "open"
 
+
 # pre defined Queries
 @app.route("/queries", methods=["GET", "POST"])
 def queries():
-
     cities = locations_collection.distinct(db.LOCATION.city)
 
     # add inputs for list_homes_below_price_in_city
@@ -518,7 +536,6 @@ def queries():
     content[3].forms.append(i)
 
     if request.method == "POST":
-
         if "list_homes_sold_multiple_times" in request.values.keys():
             c = content[0]
             c.results.clear()
@@ -526,22 +543,25 @@ def queries():
             res = q.list_homes_sold_multiple_times()
 
             for r in res:
-                addr = r['addr']
-                unit = f"\n{addr['unit_number']}" if addr['unit_number'] else ""
+                addr = r["addr"]
+                unit = f"\n{addr['unit_number']}" if addr["unit_number"] else ""
                 c.results.append(
-                    [f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}", r['times_sold']]
+                    [
+                        f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}",
+                        r["times_sold"],
+                    ]
                 )
             c.open = setOpen()
 
         if "find_owners_who_own_apartments_and_mansions" in request.values.keys():
             c = content[1]
             c.results.clear()
-        
+
             res = q.find_owners_who_own_apartments_and_mansions()
 
             for r in res:
                 c.results.append([f"{r['first_name']} {r['last_name']}"])
-            
+
             c.open = setOpen()
 
         if "find_all_homes_owner_used_to_own" in request.values.keys():
@@ -549,7 +569,7 @@ def queries():
             c.results.clear()
 
             res = q.find_all_homes_owner_used_to_own()
-                
+
             for r in res:
                 c.results.append([f"{r['first_name']} {r['last_name']}"])
 
@@ -559,18 +579,21 @@ def queries():
             c = content[3]
             c.results.clear()
 
-            res = q.list_homes_below_price_in_city(float(request.values.get('price_3')), request.values.get('city_3'))
-            print(request.values.get('price_3'))
-            print(request.values.get('city_3'))
-            print(res)
+            res = q.list_homes_below_price_in_city(
+                float(request.values.get("price_3")), request.values.get("city_3")
+            )
             for r in res:
-                addr = r['address']
-                unit = f"\n{addr['unit_number']}" if addr['unit_number'] else ""
-                c.results.append([f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}", r['transactions'][0]['price']])
-            
+                addr = r["address"]
+                unit = f"\n{addr['unit_number']}" if addr["unit_number"] else ""
+                c.results.append(
+                    [
+                        f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}",
+                        r["transactions"][0]["price"],
+                    ]
+                )
+
             c.open = setOpen()
 
-        
         # agents = list(agents_collection.find())
 
         # # Commissions for each agent
