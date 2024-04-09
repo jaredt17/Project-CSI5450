@@ -91,4 +91,31 @@
         </table>
     </details>
 
+    {% for cont in content %}
+    <details>
+        <summary>{{cont.summary}}</summary>
+        <form action="{{cont['action']}}" method="post">
+            {% for frm in cont['forms'] %}
+            <label for="{{frm[0]}}">{{frm[1]}}:</label>
+            <input type="text" id="{{frm[0]}}" name="{{frm[0]}}" required><br>
+            {% endfor %}
+            <input type="submit" value="Get Data">
+        </form>
+        <table>
+            <tr>
+                {% for head in cont['headers'] %}
+                <th>{{ head }}</th>
+                {% endfor %}
+            </tr>
+            {% for res in cont['results'] %}
+            <tr>
+                {% for c in res %}
+                <td>c</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </details>
+    {% endfor %}
+
 {% endblock %}

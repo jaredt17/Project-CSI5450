@@ -42,13 +42,13 @@ class Queries:
             {
                 "$project": {
                     "_id": 0,
-                    "address": "$home_details.location",
+                    "addr": "$home_details.location",
                     "times_sold": "$count",
                 }
             },
         ]
-        duplicates = self.transactions.aggregate(pipeline)
-        return list(duplicates)
+
+        return list(self.transactions.aggregate(pipeline))
 
 
     # WORKING testing - to add to website
