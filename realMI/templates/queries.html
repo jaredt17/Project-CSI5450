@@ -22,75 +22,6 @@
             {% endfor %}
         </tbody>
     </table>
-</details>
-
-</br>
-<details>
-    <summary>Owners of Apartments and Mansions</summary>
-    <table>
-        <tr>
-            <th>Name</th>
-        </tr>
-        <tbody>
-            {% for owner in owner_result %}
-            <tr>
-                <td>{{ owner.first_name }} {{ owner.last_name }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</details>
-
-</br>
-<details>
-    <summary>Homes that have been sold multiple times</summary>
-    <table>
-        <thead>
-            <tr>
-                <th>Home ID</th>
-                <th>Transaction Count</th>
-                <th>Floor Space</th>
-                <th>Floors</th>
-                <th>Bed Rooms</th>
-                <th>Bath Rooms</th>
-                <th>Land Size</th>
-                <th>Year Constructed</th>
-                <th>Home Type</th>
-                <th>Owner</th>
-                <th>Location</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for home in homes_sold %}
-            <tr>
-                <td>{{ home._id }}</td>
-                <td>{{ home.count }}</td>
-                <td>{{ home.result[0].floor_space }}</td>
-                <td>{{ home.result[0].floors }}</td>
-                <td>{{ home.result[0].bed_rooms }}</td>
-                <td>{{ home.result[0].bath_rooms }}</td>
-                <td>{{ home.result[0].land_size }}</td>
-                <td>{{ home.result[0].year_constructed }}</td>
-                <td>{{ home.result[0].home_type }}</td>
-                <td>
-                    {{ home.result[0].owner.first_name }} {{ home.result[0].owner.last_name }}<br>
-                    SSN: {{ home.result[0].owner.ssn }}<br>
-                    Dependents: {{ home.result[0].owner.no_dependents }}<br>
-                    Income: ${{ home.result[0].owner.income }}<br>
-                    Age: {{ home.result[0].owner.age }}<br>
-                    Profession: {{ home.result[0].owner.profession }}
-                </td>
-                <td>
-                    {{ home.result[0].location.street_number }} {{ home.result[0].location.unit_number }} {{
-                    home.result[0].location.street }}<br>
-                    {{ home.result[0].location.city }}, {{ home.result[0].location.state }} {{
-                    home.result[0].location.zip }}<br>
-                    {{ home.result[0].location.county }}, {{ home.result[0].location.country }}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </details> -->
 
 {% for cont in content %}
@@ -98,8 +29,8 @@
     <summary>{{cont.summary}}</summary>
     <form action="queries" method="post">
         {% for frm in cont.forms %}
-        <label for="{{frm[0]}}">{{frm[1]}}:</label>
-        <input type="text" id="{{frm[0]}}" name="{{frm[0]}}" required><br>
+        {{ frm.get() | safe}}
+    </br>
         {% endfor %}
         <button type="submit" name="{{cont.button}}">Run Query</button>
     </form>

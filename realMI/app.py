@@ -454,20 +454,47 @@ def home():
         "home.html", appliances=appliances, homes=homes, owners=owners
     )
 
+class Input:
+
+    SELECT = "select"
+    TEXT = "text"
+    NUMBER = "number"
+
+    def __init__(self, type, label, id) -> None:
+        self.id = id
+        self.type: str = type
+        self.options: List = []
+        self.label: str = label
+
+    def add_option(self, value, text):
+        self.options.append((value, text))
+
+    def get(self):
+        ret = f'<label for="{self.id}">{self.label}</label>\n'
+        if self.type == Input.SELECT:
+            ret += f'<select name="{self.id}" id="{self.id}">\n'
+            for opt in self.options:
+                ret += f'<option value="{opt[0]}">{opt[1]}</option>\n'
+            ret += '</select>\n'
+        else:
+            ret += f'<input type="{self.type}" id="{self.id}" name="{self.id}">\n'
+        return ret
+
 
 class Content:
-    def __init__(self, summary, button, headers, forms=[]) -> None:
+    def __init__(self, summary, button, headers) -> None:
         self.summary: str = summary
         self.open: str = ""
         self.button: str = button
-        self.forms: List[Tuple[str, str]] = forms
+        self.forms: List[Input] = []
         self.headers: List[str] = headers
         self.results: List[Any] = []
 
 content: List[Content] = [
-    Content("List homes that have been sold multiple times", "list_homes_sold_multiple_times", ["Address", "Count"]),
+    Content("List homes that have been sold multiple times", "list_homes_sold_multiple_times",["Address", "Count"]),
     Content("List owners that own apartments and mansions", "find_owners_who_own_apartments_and_mansions", ["Owner"]),
-    Content("List owners that sold a home at one point", "find_all_homes_owner_used_to_own", ["Owner"])
+    Content("List owners that sold a home at one point", "find_all_homes_owner_used_to_own", ["Owner"]),
+    Content("List all homes below a price in a given city", "list_homes_below_price_in_city", ["Address", "Price"])
 ]
 
 def setOpen():
@@ -479,10 +506,20 @@ def setOpen():
 @app.route("/queries", methods=["GET", "POST"])
 def queries():
 
+    cities = locations_collection.distinct(db.LOCATION.city)
+
+    # add inputs for list_homes_below_price_in_city
+    content[3].forms.clear()
+    content[3].forms.append(Input(Input.NUMBER, "Price", "price_3"))
+    i = Input(Input.SELECT, "City", "city_3")
+    i.add_option("", "Pick a City")
+    for c in cities:
+        i.add_option(c, c)
+    content[3].forms.append(i)
+
     if request.method == "POST":
 
         if "list_homes_sold_multiple_times" in request.values.keys():
-
             c = content[0]
             c.results.clear()
 
@@ -497,7 +534,6 @@ def queries():
             c.open = setOpen()
 
         if "find_owners_who_own_apartments_and_mansions" in request.values.keys():
-
             c = content[1]
             c.results.clear()
         
@@ -509,7 +545,6 @@ def queries():
             c.open = setOpen()
 
         if "find_all_homes_owner_used_to_own" in request.values.keys():
-
             c = content[2]
             c.results.clear()
 
@@ -518,6 +553,21 @@ def queries():
             for r in res:
                 c.results.append([f"{r['first_name']} {r['last_name']}"])
 
+            c.open = setOpen()
+
+        if "list_homes_below_price_in_city" in request.values.keys():
+            c = content[3]
+            c.results.clear()
+
+            res = q.list_homes_below_price_in_city(float(request.values.get('price_3')), request.values.get('city_3'))
+            print(request.values.get('price_3'))
+            print(request.values.get('city_3'))
+            print(res)
+            for r in res:
+                addr = r['address']
+                unit = f"\n{addr['unit_number']}" if addr['unit_number'] else ""
+                c.results.append([f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}", r['transactions'][0]['price']])
+            
             c.open = setOpen()
 
         

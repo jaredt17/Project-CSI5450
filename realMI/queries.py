@@ -217,7 +217,7 @@ class Queries:
                     "as": "transactions",
                 }
             },
-            {"$match": {"location.city": "Anytown"}},
+            {"$match": {"location.city": city}},
             {"$unwind": {"path": "$transactions", "preserveNullAndEmptyArrays": True}},
             {
                 "$match": {
@@ -225,7 +225,7 @@ class Queries:
                         {"transactions.buyer": {"$exists": False}},
                         {"transactions.buyer": None},
                     ],
-                    "transactions.price": {"$lt": 270000},
+                    "transactions.price": {"$lt": price},
                 }
             },
             {
@@ -238,8 +238,7 @@ class Queries:
             {"$project": {"_id": 0, "address": "$location", "transactions": 1}},
         ]
 
-        result = self.homes.aggregate(pipeline)
-        return list(result)
+        return list(self.homes.aggregate(pipeline))
 
 
     # Working - needs to be in website
