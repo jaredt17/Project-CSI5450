@@ -466,13 +466,13 @@ class Content:
 
 content: List[Content] = [
     Content("List homes that have been sold multiple times", "list_homes_sold_multiple_times", ["Address", "Count"]),
-    Content("List owners that own apartments and mansions", "find_owners_who_own_apartments_and_mansions", ["Owner"])
+    Content("List owners that own apartments and mansions", "find_owners_who_own_apartments_and_mansions", ["Owner"]),
+    Content("List owners that sold a home at one point", "find_all_homes_owner_used_to_own", ["Owner"])
 ]
 
 def setOpen():
     for c in content:
         c.open = ""
-
     return "open"
 
 # pre defined Queries
@@ -507,6 +507,19 @@ def queries():
                 c.results.append([f"{r['first_name']} {r['last_name']}"])
             
             c.open = setOpen()
+
+        if "find_all_homes_owner_used_to_own" in request.values.keys():
+
+            c = content[2]
+            c.results.clear()
+
+            res = q.find_all_homes_owner_used_to_own()
+                
+            for r in res:
+                c.results.append([f"{r['first_name']} {r['last_name']}"])
+
+            c.open = setOpen()
+
         
         # agents = list(agents_collection.find())
 
