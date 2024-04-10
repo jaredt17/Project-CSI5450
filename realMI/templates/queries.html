@@ -7,6 +7,14 @@
 
 <h1>Common Queries</h1>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    {% for category, message in messages %}
+        <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+<br>
 {% for cont in content %}
 <details {{cont.open}}>
     <summary>{{cont.summary}}</summary>
