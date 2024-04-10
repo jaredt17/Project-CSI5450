@@ -128,37 +128,41 @@
             <td>
                 <form action="transactions" method="post">
                     <b>Update</b><br>
-                    <label for="{{" update_" ~ trans.id}}">Agent:</label>
-                    <select name="{{" update_" ~ trans.id}}" id="{{" update_" ~ trans.id}}">
+                    <label for="{{"update_" ~ trans.id}}">Agent:</label>
+                    <select name="{{"update_" ~ trans.id}}" id="{{"update_" ~ trans.id}}">
                         <option value="">Pick an Agent </option>
                         {% for agent in agents %}
-                        <option value="{{agent._id}}">{{agent.first_name}} {{agent.last_name}}</option>
+                        {% for cmp in agent.companies %}
+                        {% if trans.home_details.location.city == cmp.location.city %}
+                        <option value="{{agent._id ~ "_" ~ cmp._id}}">{{agent.first_name}} {{agent.last_name}} - {{cmp.name}}</option>
+                        {% endif %}
+                        {% endfor %}
                         {% endfor %}
                     </select>
                     <br>
-                    <label for="{{" updateprice_" ~ trans.id}}">Price:</label>
-                    <input type="text" id="{{" updateprice_" ~ trans.id}}" name="{{" updateprice_" ~ trans.id}}">
+                    <label for="{{"updateprice_" ~ trans.id}}">Price:</label>
+                    <input type="text" id="{{"updateprice_" ~ trans.id}}" name="{{"updateprice_" ~ trans.id}}">
                     <br>
                     <br>
-                    <button type="submit" name="{{" update_" ~ trans.id}}">Update</button>
+                    <button type="submit" name="{{"update_" ~ trans.id}}">Update</button>
                 </form>
                 <br>
 
                 <form action="transactions" method="post">
                     <b>Sell</b><br>
-                    <label for="{{" sell_" ~ trans.id}}">Buyer:</label>
-                    <select name="{{" sell_" ~ trans.id}}" id="{{" sell_" ~ trans.id}}">
+                    <label for="{{"sell_" ~ trans.id}}">Buyer:</label>
+                    <select name="{{"sell_" ~ trans.id}}" id="{{"sell_" ~ trans.id}}">
                         <option value="">Pick an Owner</option>
                         {% for own in owners %}
                         <option value="{{own._id}}">{{own.first_name}} {{own.last_name}}</option>
                         {% endfor %}
                     </select>
                     <br>
-                    <label for="{{" price_" ~ trans.id}}">Price:</label>
-                    <input type="text" id="{{" price_" ~ trans.id}}" name="{{" price_" ~ trans.id}}">
+                    <label for="{{"price_" ~ trans.id}}">Price:</label>
+                    <input type="text" id="{{"price_" ~ trans.id}}" name="{{"price_" ~ trans.id}}">
                     <br>
                     <br>
-                    <button type="submit" name="{{" sell_" ~ trans.id}}">Sell</button>
+                    <button type="submit" name="{{"sell_" ~ trans.id}}">Sell</button>
                 </form>
             </td>
             {% endif %}

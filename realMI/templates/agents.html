@@ -23,7 +23,7 @@
         <label for="companies">Companies:</label><br>
         {% for company in companies %}
             <input type="checkbox" id="company_{{company['_id']}}" name="companies" value="{{company['_id']}}">
-            <label for="company_{{company['_id']}}">{{ company['name'] }}</label><br>
+            <label for="company_{{company['_id']}}">{{ company['name'] }} - {{company.location.city}}</label><br>
         {% endfor %}
         <!-- You can extend this form to include appliances, owners, and locations -->
         <input type="submit" value="Add Agent">
