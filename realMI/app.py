@@ -93,7 +93,7 @@ def transactions():
                             "home"
                         ]
                     },
-                    {"$set": {"owner": owners_collection.find({"_id": own_id})}},
+                    {"$set": {"owner": owners_collection.find_one({"_id": own_id})}},
                 )
                 flash("Successfully Sold Home", "info")
 
