@@ -346,10 +346,14 @@ def home():
                     {"_id": location.inserted_id}
                 ),
             }
-            print(new_home)
+            
+            # if db.HomeType.validate(new_home[db.HOME.home_type],
+            #                      new_home[db.HOME.floor_space],
+            #                      new_home[db.HOME.floors],
+            #                      new_home[db.HOME.land_size]):
             homes_collection.insert_one(new_home)
-
             flash("Home added successfully!", "success")
+
         except Exception as e:
             flash(f"An error occurred: {e}", "error")  # Flash an error message
         return redirect(url_for("home"))

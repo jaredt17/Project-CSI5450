@@ -43,7 +43,7 @@ class HomeType:
         # The user should select a home type, and then we just need to validate
         # If they select 2 floors it cant be an apartment etc.
         # Call HomeType.validate() returns true or false
-    def validate(user_input: str, floor_space: int, floors: int, bed_rooms: int, land_size: int) -> str:
+    def validate(user_input: str, floor_space: int, floors: int, land_size: int) -> str:
         # todo add more here as needed, we can also validate all other inputs in forms for other collections too
         match user_input:
             case "mansion":
