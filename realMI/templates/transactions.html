@@ -3,32 +3,74 @@
 {% block title %}Transactions{% endblock %}
 
 {% block content %}
-<h1>All Transactions</h1>
+<h1>Transactions</h1>
 
-<form action="" method="get">
-    <div>
-        <label for="owner_id">Filter by Owner:</label>
-        <select name="owner_id" id="owner_id">
-            <option value="">Select Owner</option>
-            {% for owner in owners %}
-            <option value="{{ owner._id }}">{{ owner.first_name }} {{ owner.last_name }}</option>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    {% for category, message in messages %}
+        <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
+<details open>
+    <summary>Transaction Filters</summary>
+    <form action="" method="get">
+        <div>
+            <label for="owner_id">Filter by Owner:</label>
+            <select name="owner_id" id="owner_id">
+                <option value="">Select Owner</option>
+                {% for owner in owners %}
+                <option value="{{ owner._id }}">{{ owner.first_name }} {{ owner.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="sort_order">Sort by Price:</label>
+            <select name="sort_order" id="sort_order">
+                <option value="-1">Descending</option>
+                <option value="1">Ascending</option>
+            </select>
+        </div>
+        <div>
+            <input type="checkbox" name="for_sale" id="for_sale" value="on" {% if for_sale=='on' %}checked{% endif %}>
+            <label for="for_sale">Show homes for sale</label>
+        </div>
+        <button type="submit">Apply Filters</button>
+    </form>
+</details>
+<br>
+<details>
+    <summary>List a Home</summary>
+    <form action="transactions" method="post">
+        <label for="list_home">Home</label>
+        <select name="list_home" id="list_home">
+            <option value="">Pick a Home</option>
+            {% for home in homes %}
+            <option value="{{home._id}}">{{ home.location.street_number }} {{ home.location.street }} - {{
+                home.location.city }}, {{
+                home.location.state }} {{home.location.zip}}</option>
             {% endfor %}
         </select>
-    </div>
-    <div>
-        <label for="sort_order">Sort by Price:</label>
-        <select name="sort_order" id="sort_order">
-            <option value="-1">Descending</option>
-            <option value="1">Ascending</option>
+        <br>
+        <label for="list_agent">Agent</label>
+        <select name="list_agent" id="list_agent">
+            <option value="">Pick an Agent </option>
+            {% for agent in agents %}
+            {% for comp in agent.companies %}
+            <option value="{{agent._id ~ "_" ~ comp._id}}">{{comp.location.city}} - {{agent.first_name}} {{agent.last_name}} ({{comp.name}})</option>
+            {% endfor %}
+            {% endfor %}
         </select>
-    </div>
-    <div>
-        <input type="checkbox" name="for_sale" id="for_sale" value="on" {% if for_sale=='on' %}checked{% endif %}>
-        <label for="for_sale">Show homes for sale</label>
-    </div>
-    <button type="submit">Apply Filters</button>
-</form>
-
+        <br>
+        <label for="list_price">Price</label>
+        <input type="text" name="list_price" id="list_price">
+        <br>
+        <br>
+        <button type="submit" name="list">List Home</button>
+    </form>
+</details>
+<br>
 {% for trans in transactions %}
 <div class="transaction-card">
     {% if trans.buyer_details %}
@@ -36,60 +78,93 @@
     {% else %}
     <h2>Home Listing</h2>
     {% endif %}
-    <p><strong>Price:</strong> ${{ trans.price }}</p>
-    <h3>Home Details:</h3>
-    {% if trans.home_details != "Home not found" %}
-    <p><strong>Address:</strong> {{trans.home_details['location']['street_number']}} {{
-        trans.home_details['location']['street'] }},
-        {{ trans.home_details['location']['city'] }}</p>
-    <p><strong>Floor Space:</strong> {{ trans.home_details['floor_space'] }} sqft</p>
-    <p><strong>Bedrooms:</strong> {{ trans.home_details['bed_rooms'] }}</p>
-    <p><strong>Bathrooms:</strong> {{ trans.home_details['bath_rooms'] }}</p>
-    {% else %}
-    <p>{{ trans.home_details }}</p>
-    {% endif %}
+    <table>
+        <tr>
+            <td>
+                <p><strong>Price:</strong> ${{ trans.price }}</p>
+                <h3>Home Details:</h3>
+                {% if trans.home_details != "Home not found" %}
+                <p><strong>Address:</strong> {{trans.home_details['location']['street_number']}} {{
+                    trans.home_details['location']['street'] }},
+                    {{ trans.home_details['location']['city'] }}</p>
+                <p><strong>Floor Space:</strong> {{ trans.home_details['floor_space'] }} sqft</p>
+                <p><strong>Bedrooms:</strong> {{ trans.home_details['bed_rooms'] }}</p>
+                <p><strong>Bathrooms:</strong> {{ trans.home_details['bath_rooms'] }}</p>
+                {% else %}
+                <p>{{ trans.home_details }}</p>
+                {% endif %}
 
-    <h3>Owner Details:</h3>
-    {% if trans.owner_details %}
-    <p><strong>Name:</strong> {{ trans.owner_details['first_name'] }} {{ trans.owner_details['last_name'] }}</p>
-    {% else %}
-    <p>Owner details not found</p>
-    {% endif %}
+                <h3>Owner Details:</h3>
+                {% if trans.owner_details %}
+                <p><strong>Name:</strong> {{ trans.owner_details['first_name'] }} {{ trans.owner_details['last_name'] }}
+                </p>
+                {% else %}
+                <p>Owner details not found</p>
+                {% endif %}
 
-    {% if trans.buyer_details %}
-    <h3>Buyer Details</h3>
-    <p><strong>Name:</strong> {{ trans.buyer_details['first_name'] }} {{ trans.buyer_details['last_name'] }}</p>
-    {% endif %}
+                {% if trans.buyer_details %}
+                <h3>Buyer Details</h3>
+                <p><strong>Name:</strong> {{ trans.buyer_details['first_name'] }} {{ trans.buyer_details['last_name'] }}
+                </p>
+                {% endif %}
 
-    <h3>Agent Details:</h3>
-    {% if trans.agent_details %}
-    <p><strong>Name:</strong> {{ trans.agent_details['first_name'] }} {{ trans.agent_details['last_name'] }}</p>
-    {% else %}
-    <p>Agent details not found</p>
-    {% endif %}
+                <h3>Agent Details:</h3>
+                {% if trans.agent_details %}
+                <p><strong>Name:</strong> {{ trans.agent_details['first_name'] }} {{ trans.agent_details['last_name'] }}
+                </p>
+                {% else %}
+                <p>Agent details not found</p>
+                {% endif %}
 
-    <h3>Company Details:</h3>
-    {% if trans.company_details %}
-    <p><strong>Name:</strong> {{ trans.company_details['name'] }}</p>
-    {% else %}
-    <p>Company details not found</p>
-    {% endif %}
+                <h3>Company Details:</h3>
+                {% if trans.company_details %}
+                <p><strong>Name:</strong> {{ trans.company_details['name'] }}</p>
+                {% else %}
+                <p>Company details not found</p>
+                {% endif %}
+            </td>
 
-    {% if not trans.buyer_details %}
-    <form action="transactions" method="post">
-        <label for="{{"sell_" ~ trans.id}}">Buyer:</label>
-        <select name="{{"sell_" ~ trans.id}}" id="{{"sell_" ~ trans.id}}">
-            {% for own in owners %}
-            <option value="{{own._id}}">{{own.first_name}} {{own.last_name}}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="{{"price_" ~ trans.id}}">Price:</label>
-        <input type="text" id="{{"price_" ~ trans.id}}" name="{{"price_" ~ trans.id}}">
-        <br>
-        <button type="submit" name="{{"sell_" ~ trans.id}}">Sell</button>
-    </form>
-    {% endif %}
+            {% if not trans.buyer_details %}
+            <td>
+                <form action="transactions" method="post">
+                    <b>Update</b><br>
+                    <label for="{{" update_" ~ trans.id}}">Agent:</label>
+                    <select name="{{" update_" ~ trans.id}}" id="{{" update_" ~ trans.id}}">
+                        <option value="">Pick an Agent </option>
+                        {% for agent in agents %}
+                        <option value="{{agent._id}}">{{agent.first_name}} {{agent.last_name}}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="{{" updateprice_" ~ trans.id}}">Price:</label>
+                    <input type="text" id="{{" updateprice_" ~ trans.id}}" name="{{" updateprice_" ~ trans.id}}">
+                    <br>
+                    <br>
+                    <button type="submit" name="{{" update_" ~ trans.id}}">Update</button>
+                </form>
+                <br>
+
+                <form action="transactions" method="post">
+                    <b>Sell</b><br>
+                    <label for="{{" sell_" ~ trans.id}}">Buyer:</label>
+                    <select name="{{" sell_" ~ trans.id}}" id="{{" sell_" ~ trans.id}}">
+                        <option value="">Pick an Owner</option>
+                        {% for own in owners %}
+                        <option value="{{own._id}}">{{own.first_name}} {{own.last_name}}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="{{" price_" ~ trans.id}}">Price:</label>
+                    <input type="text" id="{{" price_" ~ trans.id}}" name="{{" price_" ~ trans.id}}">
+                    <br>
+                    <br>
+                    <button type="submit" name="{{" sell_" ~ trans.id}}">Sell</button>
+                </form>
+            </td>
+            {% endif %}
+
+        </tr>
+    </table>
 </div>
 {% else %}
 <p>No transactions found.</p>

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, List, Tuple
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
@@ -248,26 +249,89 @@ def owners():
 
 @app.route("/transactions", methods=["POST", "GET"])
 def transactions():
-    for k in request.values.keys():
-        if "sell_" in k:
-            trans_id = k.replace("sell_", "")
-            own_id = ObjectId(request.values.get(k))
-            price = request.values.get(f"price_{trans_id}")
-            if price != "":
-                price = float(price)
-            else:
-                break
-            trans_id = ObjectId(trans_id)
+    if request.method == "POST":
+        try:
+            for k in request.values.keys():
+                if "sell_" in k:
+                    trans_id = k.replace("sell_", "")
+                    own_id = ObjectId(request.values.get(k))
+                    price = request.values.get(f"price_{trans_id}")
+                    if price != "":
+                        price = float(price)
+                    else:
+                        break
+                    trans_id = ObjectId(trans_id)
 
-            transactions_collection.update_one(
-                {"_id": trans_id},
-                {"$set": {"buyer": own_id, "price": price}},
-            )
+                    transactions_collection.update_one(
+                        {"_id": trans_id},
+                        {"$set": {"buyer": own_id, "price": price}},
+                    )
 
-            homes_collection.update_one(
-                {"_id": transactions_collection.find_one({"_id": trans_id})['home']},
-                {"$set": {"owner": owners_collection.find({"_id": own_id})}}
-            )
+                    homes_collection.update_one(
+                        {
+                            "_id": transactions_collection.find_one({"_id": trans_id})[
+                                "home"
+                            ]
+                        },
+                        {"$set": {"owner": owners_collection.find({"_id": own_id})}},
+                    )
+                    flash("Successfully Sold Home", "info")
+
+                elif "update_" in k:
+                    trans_id = k.replace("update_", "")
+                    agent_id = request.values.get(k, "")
+                    price = request.values.get(f"updateprice_{trans_id}")
+                    updates = {}
+
+                    try:
+                        price = float(price)
+                        updates["price"] = price
+                    except (ValueError, TypeError):
+                        pass
+
+                    if agent_id != "":
+                        updates["agent"] = ObjectId(agent_id)
+
+                    trans_id = ObjectId(trans_id)
+
+                    if len(updates) > 0:
+                        transactions_collection.update_one(
+                            {"_id": trans_id},
+                            {"$set": updates},
+                        )
+                    flash("Successfully Updated Listing", "info")
+
+                elif k == "list":
+                    list_home_id = request.values.get("list_home")
+                    list_agent_id = request.values.get("list_agent")
+                    list_agent_id, list_comp_id = list_agent_id.split("_")
+                    list_price = request.values.get("list_price", 0)
+
+                    home_obj = homes_collection.find_one(
+                        {"_id": ObjectId(list_home_id)}
+                    )
+                    agent_obj = agents_collection.find_one(
+                        {"_id": ObjectId(list_agent_id)}
+                    )
+                    comp_obj = companies_collection.find_one(
+                        {"_id": ObjectId(list_comp_id)}
+                    )
+
+                    new_transaction = {
+                        "seller": home_obj["owner"]["_id"],
+                        "buyer": None,
+                        "home": home_obj["_id"],
+                        "agent": agent_obj["_id"],
+                        "company": comp_obj["_id"],
+                        "date": datetime.now(),
+                        "price": float(list_price),
+                    }
+
+                    transactions_collection.insert_one(new_transaction)
+                    flash("Successfully Listed Home", "info")
+        except Exception as e:
+            flash(f"An error occurred: {e}", "error")  # Flash an error message
+        return redirect(url_for("transactions"))
 
     owner_id = request.args.get("owner_id")
     sort_order = int(request.args.get("sort_order", -1))
@@ -324,11 +388,15 @@ def transactions():
     owners = list(
         owners_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1})
     )
+    agents = list(agents_collection.find())
+    homes = list(homes_collection.find())
     return render_template(
         "transactions.html",
         transactions=transactions_details,
         owners=owners,
         for_sale=for_sale,
+        agents=agents,
+        homes=homes,
     )
 
 
