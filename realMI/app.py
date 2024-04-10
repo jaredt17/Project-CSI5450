@@ -246,8 +246,16 @@ def owners():
     return render_template("owners.html", owners=owners)
 
 
-@app.route("/transactions")
+@app.route("/transactions", methods=["POST", "GET"])
 def transactions():
+
+    for k in request.values.keys():
+        if "sell_" in k:
+            own_id = request.values.get(k)
+            print(own_id)
+
+
+
     owner_id = request.args.get("owner_id")
     sort_order = int(request.args.get("sort_order", -1))
     for_sale = request.args.get("for_sale", "off")
@@ -280,6 +288,7 @@ def transactions():
                 f"{location.get('zip', '')}"
             )
             transaction_data = {
+                "id": trans["_id"],
                 "date": trans["date"],
                 "price": trans["price"],
                 "buyer_details": buyer,
