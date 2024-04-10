@@ -248,13 +248,26 @@ def owners():
 
 @app.route("/transactions", methods=["POST", "GET"])
 def transactions():
-
     for k in request.values.keys():
         if "sell_" in k:
-            own_id = request.values.get(k)
-            print(own_id)
+            trans_id = k.replace("sell_", "")
+            own_id = ObjectId(request.values.get(k))
+            price = request.values.get(f"price_{trans_id}")
+            if price != "":
+                price = float(price)
+            else:
+                break
+            trans_id = ObjectId(trans_id)
 
+            transactions_collection.update_one(
+                {"_id": trans_id},
+                {"$set": {"buyer": own_id, "price": price}},
+            )
 
+            homes_collection.update_one(
+                {"_id": transactions_collection.find_one({"_id": trans_id})['home']},
+                {"$set": {"owner": owners_collection.find({"_id": own_id})}}
+            )
 
     owner_id = request.args.get("owner_id")
     sort_order = int(request.args.get("sort_order", -1))
@@ -539,13 +552,13 @@ content: List[Content] = [
     Content(
         "Return owner with most expensive home in city",
         "list_owners_with_most_expensive_homes_in_city",
-        ["Owner", "Price", "Address"]
+        ["Owner", "Price", "Address"],
     ),
     Content(
         "List homes by owner and city",
         "list_homes_by_owner_and_city",
-        ["Address", "Home"]
-    )
+        ["Address", "Home"],
+    ),
 ]
 
 
@@ -732,15 +745,17 @@ def queries():
             c = content[7]
             c.results.clear()
 
-            res = q.list_owners_with_most_expensive_homes_in_city(request.values.get('city_7'))
+            res = q.list_owners_with_most_expensive_homes_in_city(
+                request.values.get("city_7")
+            )
             for r in res:
-                addr = r['location']
+                addr = r["location"]
                 unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
                 c.results.append(
                     [
-                        r['owner_name'],
-                        r['home_value'],
-                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}"
+                        r["owner_name"],
+                        r["home_value"],
+                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}",
                     ]
                 )
 
@@ -750,10 +765,12 @@ def queries():
             c = content[8]
             c.results.clear()
 
-            res = q.list_homes_by_owner_and_city(request.values.get('owner_8'), request.values.get('city_8'))
+            res = q.list_homes_by_owner_and_city(
+                request.values.get("owner_8"), request.values.get("city_8")
+            )
 
             for r in res:
-                addr = r['location']
+                addr = r["location"]
                 unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
 
                 appliances = ""
@@ -772,10 +789,10 @@ def queries():
                             Type: {r['home_type']}</br> \
                             Year Constructed: {r['year_constructed']}</br> \
                             Appliances:</br> \
-                            {appliances}"
+                            {appliances}",
                     ]
                 )
-            
+
             c.open = setOpen()
 
     return render_template("queries.html", content=content)

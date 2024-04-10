@@ -77,12 +77,17 @@
 
     {% if not trans.buyer_details %}
     <form action="transactions" method="post">
-        <select name="sell_{{trans.id}}" id="sell_{{trans.id}}">
+        <label for="{{"sell_" ~ trans.id}}">Buyer:</label>
+        <select name="{{"sell_" ~ trans.id}}" id="{{"sell_" ~ trans.id}}">
             {% for own in owners %}
             <option value="{{own._id}}">{{own.first_name}} {{own.last_name}}</option>
             {% endfor %}
         </select>
-        <button type="submit" name="sell_{{trans.id}}">Sell</button>
+        <br>
+        <label for="{{"price_" ~ trans.id}}">Price:</label>
+        <input type="text" id="{{"price_" ~ trans.id}}" name="{{"price_" ~ trans.id}}">
+        <br>
+        <button type="submit" name="{{"sell_" ~ trans.id}}">Sell</button>
     </form>
     {% endif %}
 </div>
