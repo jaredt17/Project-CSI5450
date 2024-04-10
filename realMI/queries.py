@@ -20,7 +20,7 @@ class Queries:
         if isinstance(owner_id, str):
             owner_id = ObjectId(owner_id)
 
-        pipeline = [{"$match": {"owner": owner_id, "location.city": city}}]
+        pipeline = [{"$match": {"owner._id": owner_id, "location.city": city}}]
 
         return list(self.homes.aggregate(pipeline))
 
@@ -278,7 +278,7 @@ class Queries:
                         "$concat": ["$owner.first_name", " ", "$owner.last_name"]
                     },
                     "home_value": "$latest_transaction.price",
-                    "city": "$location.city",
+                    "location": 1,
                 }
             },
         ]

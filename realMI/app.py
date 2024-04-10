@@ -513,10 +513,30 @@ content: List[Content] = [
         ["Address", "Price"],
     ),
     Content(
-        "Find the most expensive home an owner ever bought",
+        "Return the most expensive home an owner ever bought",
         "find_highest_selling_home",
         ["Price", "Address"],
     ),
+    Content(
+        "List all homes with only appliances of one make",
+        "find_homes_with_appliances_of_make",
+        ["Address", "Appliances"],
+    ),
+    Content(
+        "Return a Agents total commission earned",
+        "total_commission_by_agent",
+        ["Commission"],
+    ),
+    Content(
+        "Return owner with most expensive home in city",
+        "list_owners_with_most_expensive_homes_in_city",
+        ["Owner", "Price", "Address"]
+    ),
+    Content(
+        "List homes by owner and city",
+        "list_homes_by_owner_and_city",
+        ["Address", "Home"]
+    )
 ]
 
 
@@ -531,6 +551,8 @@ def setOpen():
 def queries():
     cities = locations_collection.distinct(db.LOCATION.city)
     owners = list(owners_collection.find())
+    makes = list(appliances_collection.distinct(db.APPLIANCE.make))
+    agents = list(agents_collection.find())
 
     # add inputs for list_homes_below_price_in_city
     content[3].forms.clear()
@@ -543,10 +565,49 @@ def queries():
 
     # add inputs for find_highest_selling_home
     content[4].forms.clear()
-    o = Input(Input.SELECT, "Owner", "owner_4")
-    for ow in owners:
-        o.add_option(ow["_id"], f"{ow['first_name']} {ow["last_name"]}")
-    content[4].forms.append(o)
+    i = Input(Input.SELECT, "Owner", "owner_4")
+    i.add_option("", "Pick an Owner")
+    for o in owners:
+        i.add_option(o["_id"], f"{o['first_name']} {o["last_name"]}")
+    content[4].forms.append(i)
+
+    # add inputs for find_homes_with_appliances_of_make
+    content[5].forms.clear()
+    i = Input(Input.SELECT, "Make", "make_5")
+    i.add_option("", "Pick a Make")
+    for m in makes:
+        i.add_option(m, m)
+    content[5].forms.append(i)
+
+    # add inputs for total_commission_by_agent
+    content[6].forms.clear()
+    i = Input(Input.SELECT, "Agent", "agent_6")
+    i.add_option("", "Pick an Agent")
+    for a in agents:
+        i.add_option(a["_id"], f'{a["first_name"]} {a["last_name"]}')
+    content[6].forms.append(i)
+
+    # add inputs for list_owners_with_most_expensive_homes_in_city
+    content[7].forms.clear()
+    i = Input(Input.SELECT, "City", "city_7")
+    i.add_option("", "Pick a City")
+    for c in cities:
+        i.add_option(c, c)
+    content[7].forms.append(i)
+
+    # add inputs for list_homes_by_owner_and_city
+    content[8].forms.clear()
+    i = Input(Input.SELECT, "City", "city_8")
+    i.add_option("", "Pick a City")
+    for c in cities:
+        i.add_option(c, c)
+    content[8].forms.append(i)
+
+    i = Input(Input.SELECT, "Owner", "owner_8")
+    i.add_option("", "Pick an Owner")
+    for o in owners:
+        i.add_option(o["_id"], f"{o['first_name']} {o["last_name"]}")
+    content[8].forms.append(i)
 
     if request.method == "POST":
         if "list_homes_sold_multiple_times" in request.values.keys():
@@ -557,10 +618,10 @@ def queries():
 
             for r in res:
                 addr = r["addr"]
-                unit = f"\n{addr['unit_number']}" if addr["unit_number"] else ""
+                unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
                 c.results.append(
                     [
-                        f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}",
+                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}",
                         r["times_sold"],
                     ]
                 )
@@ -597,10 +658,10 @@ def queries():
             )
             for r in res:
                 addr = r["address"]
-                unit = f"\n{addr['unit_number']}" if addr["unit_number"] else ""
+                unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
                 c.results.append(
                     [
-                        f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}",
+                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}",
                         r["transactions"][0]["price"],
                     ]
                 )
@@ -615,14 +676,97 @@ def queries():
 
             for r in res:
                 addr = r["home_details"]["location"]
-                unit = f"\n{addr['unit_number']}" if addr["unit_number"] else ""
+                unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
                 c.results.append(
                     [
                         r["price"],
-                        f"{addr['street_number']} {addr['street']}{unit}\n{addr['city']}, {addr['state']} {addr['zip']}",
+                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}",
                     ]
                 )
 
+            c.open = setOpen()
+
+        if "find_homes_with_appliances_of_make" in request.values.keys():
+            c = content[5]
+            c.results.clear()
+
+            res = q.find_homes_with_appliances_of_make(request.values.get("make_5"))
+
+            for r in res:
+                addr = r["location"]
+                unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
+                appliances = ""
+                for a in r["appliances"]:
+                    appliances += (
+                        f'{a["name"]} - {a["make"]} {a["model"]} ({a['year']})</br>'
+                    )
+                c.results.append(
+                    [
+                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}",
+                        appliances,
+                    ]
+                )
+
+            c.open = setOpen()
+
+        if "total_commission_by_agent" in request.values.keys():
+            c = content[6]
+            c.results.clear()
+
+            res = q.total_commission_by_agent(request.values.get("agent_6"))
+            for r in res:
+                c.results.append([r["total_commission"]])
+
+            c.open = setOpen()
+
+        if "list_owners_with_most_expensive_homes_in_city" in request.values.keys():
+            c = content[7]
+            c.results.clear()
+
+            res = q.list_owners_with_most_expensive_homes_in_city(request.values.get('city_7'))
+            for r in res:
+                addr = r['location']
+                unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
+                c.results.append(
+                    [
+                        r['owner_name'],
+                        r['home_value'],
+                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}"
+                    ]
+                )
+
+            c.open = setOpen()
+
+        if "list_homes_by_owner_and_city" in request.values.keys():
+            c = content[8]
+            c.results.clear()
+
+            res = q.list_homes_by_owner_and_city(request.values.get('owner_8'), request.values.get('city_8'))
+
+            for r in res:
+                addr = r['location']
+                unit = f"</br>{addr['unit_number']}" if addr["unit_number"] else ""
+
+                appliances = ""
+                for a in r["appliances"]:
+                    appliances += (
+                        f'{a["name"]} - {a["make"]} {a["model"]} ({a['year']})</br>'
+                    )
+
+                c.results.append(
+                    [
+                        f"{addr['street_number']} {addr['street']}{unit}</br>{addr['city']}, {addr['state']} {addr['zip']}",
+                        f"Floor space: {r['floor_space']}</br> \
+                            Floors: {r['floors']}</br> \
+                            Bedrooms: {r['bed_rooms']}</br> \
+                            Bathrooms: {r['bath_rooms']}</br> \
+                            Type: {r['home_type']}</br> \
+                            Year Constructed: {r['year_constructed']}</br> \
+                            Appliances:</br> \
+                            {appliances}"
+                    ]
+                )
+            
             c.open = setOpen()
 
     return render_template("queries.html", content=content)

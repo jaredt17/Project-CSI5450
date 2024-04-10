@@ -26,7 +26,7 @@
         {% for res in cont.results %}
         <tr>
             {% for c in res %}
-            <td>{{c}}</td>
+            <td>{{c | safe}}</td>
             {% endfor %}
         </tr>
         {% endfor %}
